@@ -128,7 +128,8 @@ if __name__ == '__main__':
                 elif (not occupy) and (moneyLeft !=0):
                     #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                     newstate = Empty
-                else newstate = Idle
+                else :
+                    newstate = Idle
         
         elif state == Safe:
             digitalWrite(ledG,1)		# Send High to switch on Green LED
