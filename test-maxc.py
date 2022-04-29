@@ -92,11 +92,17 @@ if __name__ == '__main__':
     setRGB(50,128,128)
     setText("EE250 FinalProj\nJoseph Silas Max")
     while True:
+        print("R G turn on ....")
+        setText(" R@G on ")
         digitalWrite(ledR,1)		# self checking
         digitalWrite(ledG,1)		# 
-        time.sleep(5)
-        digitalWrite(ledR,0)		# self checking
-        digitalWrite(ledG,0)		# 
+        time.sleep(3)
+        if (grovepi.digitalRead(buttonA) == 1):
+            print("R G turn off ...")
+            setText(" R@G off ")
+            digitalWrite(ledR,0)		# self checking
+            digitalWrite(ledG,0)		# 
+            time.sleep(3)
 
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
