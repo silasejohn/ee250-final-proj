@@ -88,7 +88,7 @@ if __name__ == '__main__':
         timeNow = datetime.now()
         if moneyLeft:
             if (timeNow != timePre ) :
-                moneyLeft = moneyLeft - rate*(timeNow-timePre).dt.total_seconds() / 60
+                moneyLeft = moneyLeft - rate*(timeNow-timePre).total_seconds() / 60
                 #minutes_diff = (datetime_end - datetime_start).dt.total_seconds() / 60.0
                 timePre = timeNow
                 if moneyLeft<0:
