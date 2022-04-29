@@ -62,7 +62,7 @@ if __name__ == '__main__':
     occupy = False
     moneyLeft = 0 # unit: cent
     moneyCredit = 0 # Subscribe the online payment info from the Center
-    rate = 5 # 5 cent /min for parking rate
+    rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         timeNow = datetime.now()
         if moneyLeft:
             if (timeNow != timePre ) :
-                moneyLeft = moneyLeft - rate*abs(timeNow-timePre)
+                moneyLeft = moneyLeft - rate*(timeNow-timePre).dt.total_seconds() / 60
                 #minutes_diff = (datetime_end - datetime_start).dt.total_seconds() / 60.0
                 timePre = timeNow
                 if moneyLeft<0:
