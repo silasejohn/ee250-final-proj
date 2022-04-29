@@ -57,14 +57,11 @@ def on_LCD(client, userdata, message): #Maxc rename from suctom_callback()
 def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
     #the third argument is 'message' here unlike 'msg' in on_message
     
-    print("Command online paied: " + str(message.payload, "utf-8") ) #Maxc
+    print("Command: " + str(message.payload, "utf-8") ) #Maxc
     paied = str(message.payload, "utf-8")
-    setRGB(50,128,80)
-    setText("Received money:  %s cent"%(paied)) 
-    time.sleep(2)
+    setRGB(50,128,128)
+    setText("Received letter: %s"%(paied)) 
     moneyCredit = int(paied)
-    setText("Received int:  %d cent"%(paied))
-    time.sleep(2)    
 
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
