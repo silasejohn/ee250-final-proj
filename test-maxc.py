@@ -131,6 +131,7 @@ if __name__ == '__main__':
         elif state == "Loading":
             setRGB(50,128,128)
             setText("Coin and Email:")
+            time.sleep(2)
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
             digitalWrite(ledG,1)            
             # check the potentiiometer value: total 5 different emails.
