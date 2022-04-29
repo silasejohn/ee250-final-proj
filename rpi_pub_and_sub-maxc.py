@@ -72,7 +72,7 @@ if __name__ == '__main__':
     ultras = 4 # Port of the ultrasonic installed.
     potentiometer = 2 # Analog port 2, see Lab6 code.
     ledR = 3 # Port of the led installed
-    ledG = 1 # Port of the led installed
+    ledG = 7 # Port of the led installed
     emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
 
     occupy = False
