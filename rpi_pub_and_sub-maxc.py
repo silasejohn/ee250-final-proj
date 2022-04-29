@@ -97,7 +97,7 @@ if __name__ == '__main__':
             moneyLeft = moneyLeft + 25        
         timeLeft = (moneyCredit + moneyLeft)/rate
         moneyCredit = 0
-        setText("Money left: \n%4d cents"%(moneyLeft))
+        setText("MoneyL:%3d cnts\nDist: %3d cm"%(moneyLeft, objDist))
         time.sleep(1)
 
 # State Machine Logic:
@@ -123,7 +123,9 @@ if __name__ == '__main__':
             if (time1MCnt > 5) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
-                    newstate = "Safe"                    
+                    newstate = "Safe" 
+                    setText("Email: \n%s "%(email))
+                    time.sleep(1)
                     #client.publish("xchen335/email", email) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
