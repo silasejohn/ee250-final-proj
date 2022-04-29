@@ -154,7 +154,7 @@ if __name__ == '__main__':
             elif (occupy and (moneyLeft !=0)): 
                 newstate = Loading        
 
-        elif state == Illegal
+        elif state == Illegal:
             digitalWrite(ledR,1)		# Flash Red LED
             digitalWrite(ledG,0) 
             time.sleep(0.5)
