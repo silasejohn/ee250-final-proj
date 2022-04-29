@@ -149,7 +149,7 @@ if __name__ == '__main__':
                     newstate = "Safe" 
                     setText("Email: \n%s "%(email))
                     time.sleep(1)
-                    client.publish("xchen335/email", email+str(int(moneyLeft))) #Publish the email info (need timestart?)
+                    client.publish("xchen335/email", email+str(timeLeft)) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
                     client.publish("xchen335/email", "fine"+email) #Publish the email info ("fine means take ticket")
