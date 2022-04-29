@@ -85,6 +85,8 @@ if __name__ == '__main__':
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
             occupy = True
+        else :
+            occupy = False
         timeNow = datetime.now()
         if moneyLeft:
             if (timeNow != timePre ) :
