@@ -125,7 +125,7 @@ if __name__ == '__main__':
                 elif (occupy and (moneyLeft ==0)):
                     newstate = Illegal
                     #client.publish("xchen335/email", "fine") #Publish the email info ("fine means take ticket")
-                elif (not occupy) and (moneyLeft !=0)):
+                elif (not occupy) and (moneyLeft !=0):
                     #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                     newstate = Empty
                 else newstate = Idle
