@@ -98,6 +98,7 @@ if __name__ == '__main__':
         timeLeft = (moneyCredit + moneyLeft)/rate
         moneyCredit = 0
         setText("Money left: \n%4d cents"%(moneyLeft))
+        time.sleep(1)
 
 # State Machine Logic:
         if state == "Idle":
@@ -119,7 +120,7 @@ if __name__ == '__main__':
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
-            if (time1MCnt > 8) :
+            if (time1MCnt > 5) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
                     newstate = "Safe"                    
