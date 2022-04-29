@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
-        if (objDist > 15) and (objDist <100) :
+        if (objDist > 1) and (objDist <100) :
             occupy = True
         timeNow = datetime.now()
         if moneyLeft:
@@ -168,7 +168,7 @@ if __name__ == '__main__':
             elif ((not occupy) and (moneyLeft !=0)): 
                 newstate = "Empty"  
 #End of the Logic.
-
+        setText("State: %s\n NewSta: %s"%(state, newstate))
         if (state != newstate) :
             state = newstate
         elif (state == "Loading") :
