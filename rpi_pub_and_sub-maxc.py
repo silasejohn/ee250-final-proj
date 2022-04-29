@@ -150,12 +150,12 @@ if __name__ == '__main__':
                     newstate = "Safe" 
                     setText("Email: \n%s "%(email))
                     time.sleep(1)
-                    client.publish("xchen335/email", email+str(int(timeLeft))) #Publish the email info (need timestart?)
+                    client.publish("xchen335/email", email+":"+str(int(timeLeft))) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
-                    client.publish("xchen335/email", "fine"+email) #Publish the email info ("fine means take ticket")
+                    client.publish("xchen335/email", email+":fine") #Publish the email info ("fine means take ticket")
                 elif (not occupy) and (moneyLeft !=0):
-                    client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                    client.publish("xchen335/email", email+":null") #Publish the email info ("null means remove the email")
                     newstate = "Empty"
                 else :
                     newstate = "Idle"
@@ -167,7 +167,7 @@ if __name__ == '__main__':
             if (occupy and (moneyLeft ==0)):
                 newstate = "Loading"
             elif ((not occupy) and (moneyLeft !=0)):
-                client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                client.publish("xchen335/email", email+":null") #Publish the email info ("null means remove the email")
                 newstate = "Empty"
             elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = "Idle"
