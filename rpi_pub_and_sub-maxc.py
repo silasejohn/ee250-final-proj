@@ -66,8 +66,8 @@ if __name__ == '__main__':
     timeExpir = 0
     timePre = datetime.now()
 
-    state = Idle # total 5 states: Idle, Loading, Safe, Empty, Illegal
-    newstate = Idle
+    state = "Idle" # total 5 states: Idle, Loading, Safe, Empty, Illegal
+    newstate = "Idle"
     time1MCnt = 0 # 1 minute timer counter.
 
     #this section is covered in publisher_and_subscriber_example.py
@@ -99,16 +99,16 @@ if __name__ == '__main__':
         moneyCredit = 0
 
 # State Machine Logic:
-        if state == Idle:
+        if state == "Idle":
             setRGB(0,0,0)
             digitalWrite(ledR,0)		# Send Low to switch off Red LED
             digitalWrite(ledG,0)		# Send Low to switch off Green LED
             if occupy :
-                newstate = Loading
+                newstate = "Loading"
             elif moneyLeft:
-                newstate = Empty
+                newstate = "Empty"
         
-        elif state == Loading:
+        elif state == "Loading":
             setRGB(50,128,128)
             setText("Coin and Email:")
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
@@ -121,57 +121,57 @@ if __name__ == '__main__':
             if (time1MCnt > 60) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
-                    newstate = Safe                    
+                    newstate = "Safe"                    
                     #client.publish("xchen335/email", email) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
-                    newstate = Illegal
+                    newstate = "Illegal"
                     #client.publish("xchen335/email", "fine") #Publish the email info ("fine means take ticket")
                 elif (not occupy) and (moneyLeft !=0):
                     #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
-                    newstate = Empty
+                    newstate = "Empty"
                 else :
-                    newstate = Idle
+                    newstate = "Idle"
         
-        elif state == Safe:
+        elif state == "Safe":
             digitalWrite(ledG,1)		# Send High to switch on Green LED
             digitalWrite(ledR,0) 
             setText("Time left: \n%4d min"%(timeLeft))
             if (occupy and (moneyLeft ==0)):
-                newstate = Loading
+                newstate = "Loading"
             elif ((not occupy) and (moneyLeft !=0)):
                 #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
-                newstate = Empty
+                newstate = "Empty"
             elif ((not occupy) and (moneyLeft ==0)): 
-                newstate = Idle
+                newstate = "Idle"
         
-        elif state == Empty:
+        elif state == "Empty":
             digitalWrite(ledG,1)		# Send High to switch on Green LED
             digitalWrite(ledR,0) 
             setText("Time left: \n%4d min"%(timeLeft))
             if (occupy and (moneyLeft ==0)):
-                newstate = Loading
+                newstate = "Loading"
             elif ((not occupy) and (moneyLeft ==0)):
-                newstate = Idle
+                newstate = "Idle"
             elif (occupy and (moneyLeft !=0)): 
-                newstate = Loading        
+                newstate = "Loading"        
 
-        elif state == Illegal:
+        elif state == "Illegal":
             digitalWrite(ledR,1)		# Flash Red LED
             digitalWrite(ledG,0) 
             time.sleep(0.5)
             digitalWrite(ledR,0)
             setText("Please move")
             if (occupy and (moneyLeft !=0)):
-                newstate = Safe
+                newstate = "Safe"
             elif ((not occupy) and (moneyLeft ==0)):
-                newstate = Idle
+                newstate = "Idle"
             elif ((not occupy) and (moneyLeft !=0)): 
-                newstate = Empty  
+                newstate = "Empty"  
 #End of the Logic.
 
         if (state != newstate) :
             state = newstate
-        elif (state == Loading) :
+        elif (state == "Loading") :
             time1MCnt = time1MCnt +1
         
 
