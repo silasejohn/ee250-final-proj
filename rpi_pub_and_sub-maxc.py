@@ -125,7 +125,7 @@ if __name__ == '__main__':
                 elif (occupy and (moneyLeft ==0)):
                     newstate = Illegal
                     #client.publish("xchen335/email", "fine") #Publish the email info ("fine means take ticket")
-                elif (!(occupy) and (moneyLeft !=0)):
+                elif (not occupy) and (moneyLeft !=0)):
                     #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                     newstate = Empty
                 else newstate = Idle
@@ -136,10 +136,10 @@ if __name__ == '__main__':
             setText("Time left: \n%4d min"%(timeLeft))
             if (occupy and (moneyLeft ==0)):
                 newstate = Loading
-            elif (!(occupy) and (moneyLeft !=0)):
+            elif ((not occupy) and (moneyLeft !=0)):
                 #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                 newstate = Empty
-            elif (!(occupy) and (moneyLeft ==0)): 
+            elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = Idle
         
         elif state == Empty
@@ -148,7 +148,7 @@ if __name__ == '__main__':
             setText("Time left: \n%4d min"%(timeLeft))
             if (occupy and (moneyLeft ==0)):
                 newstate = Loading
-            elif (!(occupy) and (moneyLeft ==0)):
+            elif ((not occupy) and (moneyLeft ==0)):
                 newstate = Idle
             elif (occupy and (moneyLeft !=0)): 
                 newstate = Loading        
@@ -161,9 +161,9 @@ if __name__ == '__main__':
             setText("Please move")
             if (occupy and (moneyLeft !=0)):
                 newstate = Safe
-            elif (!(occupy) and (moneyLeft ==0)):
+            elif ((not occupy) and (moneyLeft ==0)):
                 newstate = Idle
-            elif (!(occupy) and (moneyLeft !=0)): 
+            elif ((not occupy) and (moneyLeft !=0)): 
                 newstate = Empty  
 #End of the Logic.
 
