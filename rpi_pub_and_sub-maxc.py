@@ -4,6 +4,7 @@ Run rpi_pub_and_sub.py on your Raspberry Pi."""
 
 import paho.mqtt.client as mqtt
 import time
+from datetime import datetime
 
 import sys
 # By appending the folder of all the GrovePi libraries to the system path here,
