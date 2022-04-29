@@ -64,6 +64,7 @@ def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
     time.sleep(2)
     moneyCredit = int(paied)
     setText("Received int:  %d cent"%(paied))
+    print("Received money: " + paied + " cents.")
     time.sleep(2)    
 
 if __name__ == '__main__':
@@ -134,6 +135,7 @@ if __name__ == '__main__':
         elif state == "Loading":
             setRGB(50,128,128)
             setText("Coin and Email:")
+            time.sleep(2)
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
             digitalWrite(ledG,1)            
             # check the potentiiometer value: total 5 different emails.
@@ -147,7 +149,7 @@ if __name__ == '__main__':
                     newstate = "Safe" 
                     setText("Email: \n%s "%(email))
                     time.sleep(1)
-                    client.publish("xchen335/email", email+str(moneyLeft)) #Publish the email info (need timestart?)
+                    client.publish("xchen335/email", email+str(int(moneyLeft))) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
                     client.publish("xchen335/email", "fine"+email) #Publish the email info ("fine means take ticket")
