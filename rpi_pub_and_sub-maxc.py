@@ -143,7 +143,7 @@ if __name__ == '__main__':
             elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = Idle
         
-        elif state == Empty
+        elif state == Empty:
             digitalWrite(ledG,1)		# Send High to switch on Green LED
             digitalWrite(ledR,0) 
             setText("Time left: \n%4d min"%(timeLeft))
