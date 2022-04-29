@@ -97,6 +97,7 @@ if __name__ == '__main__':
             moneyLeft = moneyLeft + 25        
         timeLeft = (moneyCredit + moneyLeft)/rate
         moneyCredit = 0
+        setText("Money left: \n%4d cents"%(moneyLeft))
 
 # State Machine Logic:
         if state == "Idle":
@@ -112,13 +113,13 @@ if __name__ == '__main__':
             setRGB(50,128,128)
             setText("Coin and Email:")
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
-            digitalWrite(ledG,0)            
+            digitalWrite(ledG,1)            
             # check the potentiiometer value: total 5 different emails.
             potenVal = grovepi.analogRead(potentiometer)
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
-            if (time1MCnt > 60) :
+            if (time1MCnt > 8) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
                     newstate = "Safe"                    
