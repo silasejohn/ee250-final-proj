@@ -91,11 +91,12 @@ if __name__ == '__main__':
 
     setRGB(50,128,128)
     setText("EE250 FinalProj\nJoseph Silas Max")
-    digitalWrite(ledR,1)		# self checking
-    digitalWrite(ledG,1)		# 
-    time.sleep(5)
-    digitalWrite(ledR,0)		# self checking
-    digitalWrite(ledG,0)		# 
+    while True:
+        digitalWrite(ledR,1)		# self checking
+        digitalWrite(ledG,1)		# 
+        time.sleep(5)
+        digitalWrite(ledR,0)		# self checking
+        digitalWrite(ledG,0)		# 
 
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
-            if (time1MCnt > 5) :
+            if (time1MCnt > 3) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
                     newstate = "Safe" 
