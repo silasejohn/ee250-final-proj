@@ -63,7 +63,7 @@ def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
     setText("Received money:  %s cent"%(paied)) 
     time.sleep(2)
     moneyCredit = int(paied)
-    setText("Received int:  %d cent"%(paied))
+    setText("Received int:  %d cent"%(moneyCredit))
     print("Received money: " + paied + " cents.")
     time.sleep(2)    
 
@@ -143,6 +143,7 @@ if __name__ == '__main__':
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
+            time.sleep(2)
             if (time1MCnt > 5) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
