@@ -79,7 +79,11 @@ if __name__ == '__main__':
 
     setRGB(50,128,128)
     setText("EE250 FinalProj\nJoseph Silas Max")
+    digitalWrite(ledR,1)		# self checking
+    digitalWrite(ledG,1)		# 
     time.sleep(5)
+    digitalWrite(ledR,0)		# self checking
+    digitalWrite(ledG,0)		# 
 
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
