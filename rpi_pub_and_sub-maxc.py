@@ -73,7 +73,7 @@ if __name__ == '__main__':
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
-    client.connect(host="eclipse.usc.edu", port=11000, keepalive=60) # port=1883
+    client.connect(host="eclipse.usc.edu", port=1883, keepalive=60) # port=1883
     client.loop_start()
 
     setRGB(50,128,128)
