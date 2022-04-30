@@ -119,8 +119,10 @@ if __name__ == '__main__':
                     moneyLeft = 0
         if (grovepi.digitalRead(buttonA) == 1):
             moneyLeft = moneyLeft + 25        
-        timeLeft = (moneyCredit + moneyLeft)/rate
+        moneyLeft = moneyCredit + moneyLeft
         moneyCredit = 0
+        timeLeft = moneyLeft/rate
+
         setText("MoneyL:%3d cnts\nDist: %3d cm"%(moneyLeft, objDist))
         time.sleep(1)
 
