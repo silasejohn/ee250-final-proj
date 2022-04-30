@@ -18,6 +18,8 @@ import grovepi
 from grovepi import *
 from grove_rgb_lcd import *
 
+moneyCredit = 0 # Global variable. Subscribe the online payment info from the Center
+
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
@@ -56,7 +58,8 @@ def on_LCD(client, userdata, message): #Maxc rename from suctom_callback()
 
 def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
     #the third argument is 'message' here unlike 'msg' in on_message
-    
+    global moneyCredit
+
     print("Command online paied: " + str(message.payload, "utf-8") ) #Maxc
     paied = str(message.payload, "utf-8")
     setRGB(50,128,80)
@@ -77,7 +80,6 @@ if __name__ == '__main__':
 
     occupy = False
     moneyLeft = 0 # unit: cent
-    moneyCredit = 0 # Subscribe the online payment info from the Center
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
