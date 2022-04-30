@@ -18,6 +18,8 @@ import grovepi
 from grovepi import *
 from grove_rgb_lcd import *
 
+moneyCredit = 0 # Global variable. Subscribe the online payment info from the Center
+
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
@@ -56,14 +58,16 @@ def on_LCD(client, userdata, message): #Maxc rename from suctom_callback()
 
 def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
     #the third argument is 'message' here unlike 'msg' in on_message
-    
+    global moneyCredit
+
     print("Command online paied: " + str(message.payload, "utf-8") ) #Maxc
     paied = str(message.payload, "utf-8")
     setRGB(50,128,80)
     setText("Received money:  %s cent"%(paied)) 
     time.sleep(2)
     moneyCredit = int(paied)
-    setText("Received int:  %d cent"%(paied))
+    setText("Received int:  %d cent"%(moneyCredit))
+    print("Received money: " + paied + " cents.")
     time.sleep(2)    
 
 if __name__ == '__main__':
@@ -71,12 +75,11 @@ if __name__ == '__main__':
     ultras = 4 # Port of the ultrasonic installed.
     potentiometer = 2 # Analog port 2, see Lab6 code.
     ledR = 3 # Port of the led installed
-    ledG = 1 # Port of the led installed
+    ledG = 7 # Port of the led installed
     emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
 
     occupy = False
     moneyLeft = 0 # unit: cent
-    moneyCredit = 0 # Subscribe the online payment info from the Center
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
@@ -116,8 +119,10 @@ if __name__ == '__main__':
                     moneyLeft = 0
         if (grovepi.digitalRead(buttonA) == 1):
             moneyLeft = moneyLeft + 25        
-        timeLeft = (moneyCredit + moneyLeft)/rate
+        moneyLeft = moneyCredit + moneyLeft
         moneyCredit = 0
+        timeLeft = moneyLeft/rate
+
         setText("MoneyL:%3d cnts\nDist: %3d cm"%(moneyLeft, objDist))
         time.sleep(1)
 
@@ -134,6 +139,7 @@ if __name__ == '__main__':
         elif state == "Loading":
             setRGB(50,128,128)
             setText("Coin and Email:")
+            time.sleep(2)
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
             digitalWrite(ledG,1)            
             # check the potentiiometer value: total 5 different emails.
@@ -141,18 +147,19 @@ if __name__ == '__main__':
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
+            time.sleep(2)
             if (time1MCnt > 5) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
                     newstate = "Safe" 
                     setText("Email: \n%s "%(email))
                     time.sleep(1)
-                    client.publish("xchen335/email", email+str(moneyLeft)) #Publish the email info (need timestart?)
+                    client.publish("xchen335/email", email+":"+str(int(timeLeft))) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
-                    client.publish("xchen335/email", "fine"+email) #Publish the email info ("fine means take ticket")
+                    client.publish("xchen335/email", email+":fine") #Publish the email info ("fine means take ticket")
                 elif (not occupy) and (moneyLeft !=0):
-                    client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                    client.publish("xchen335/email", email+":null") #Publish the email info ("null means remove the email")
                     newstate = "Empty"
                 else :
                     newstate = "Idle"
@@ -164,7 +171,7 @@ if __name__ == '__main__':
             if (occupy and (moneyLeft ==0)):
                 newstate = "Loading"
             elif ((not occupy) and (moneyLeft !=0)):
-                client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                client.publish("xchen335/email", email+":null") #Publish the email info ("null means remove the email")
                 newstate = "Empty"
             elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = "Idle"

@@ -1,6 +1,6 @@
-"""EE 250L Lab 05 Starter Code
+"""EE 250L Final Project Code
 
-Run vm_subscriber.py in a separate terminal on your VM."""
+Run vm_subscriber-maxcProj.py in a separate terminal on your VM."""
 
 import paho.mqtt.client as mqtt
 import time
@@ -15,6 +15,10 @@ def on_connect(client, userdata, flags, rc):
     #subscribe to the button topic here
     client.subscribe("xchen335/button") #Maxc
     client.message_callback_add("xchen335/button", on_Button) #Maxc
+
+    #subscribe to the email topic here
+    client.subscribe("xchen335/email") #Maxc
+    client.message_callback_add("xchen335/email", on_Email) #Maxc
 
 
 #Default message callback. Please use custom callbacks.
@@ -38,12 +42,19 @@ def on_Button(client, userdata, message): #Maxc rename from suctom_callback()
     else:
         print("Button not pressed!")
 
+def on_Email(client, userdata, message): #Maxc rename from suctom_callback()
+    #the third argument is 'message' here unlike 'msg' in on_message
+    
+    # Action for email message is printing out the string.
+    print("Received email Info:" + str(message.payload, "utf-8") ) #Maxc
+
+
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
-    client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
+    client.connect(host="eclipse.usc.edu", port=1883, keepalive=60)
     client.loop_start()
 
     while True:

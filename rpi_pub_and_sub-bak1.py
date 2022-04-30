@@ -1,6 +1,6 @@
-"""EE 250L Lab Project code
+"""EE 250L Lab 05 Starter Code
 
-Run rpi_pub_and_sub-maxc.py on Raspberry Pi."""
+Run rpi_pub_and_sub.py on your Raspberry Pi."""
 
 import paho.mqtt.client as mqtt
 import time
@@ -28,9 +28,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("xchen335/lcd") #Maxc
     client.message_callback_add("xchen335/lcd", on_LCD) #Maxc
 
-    client.subscribe("xchen335/credit") #Maxc
-    client.message_callback_add("xchen335/credit", pay_online) #Maxc
-
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
@@ -54,22 +51,13 @@ def on_LCD(client, userdata, message): #Maxc rename from suctom_callback()
     setRGB(50,128,128)
     setText("Received letter: %c"%(str(message.payload, "utf-8")))  
 
-def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
-    #the third argument is 'message' here unlike 'msg' in on_message
-    
-    print("Command: " + str(message.payload, "utf-8") ) #Maxc
-    paied = str(message.payload, "utf-8")
-    setRGB(50,128,128)
-    setText("Received letter: %s"%(paied)) 
-    moneyCredit = int(paied)
-
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
     ultras = 4 # Port of the ultrasonic installed.
     potentiometer = 2 # Analog port 2, see Lab6 code.
     ledR = 3 # Port of the led installed
     ledG = 1 # Port of the led installed
-    emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
+    emails = ["xchen335@usc.edu", "abc1@usc.edu", "abc2@usc.edu", "abc3@usc.edu", "abc4@usc.edu"]
 
     occupy = False
     moneyLeft = 0 # unit: cent
@@ -91,25 +79,12 @@ if __name__ == '__main__':
 
     setRGB(50,128,128)
     setText("EE250 FinalProj\nJoseph Silas Max")
-    while True:
-        print("R G turn on ....")
-        setText(" R@G on ")
-        digitalWrite(ledR,1)		# self checking
-        digitalWrite(ledG,1)		# 
-        time.sleep(3)
-        if (grovepi.digitalRead(buttonA) == 1):
-            print("R G turn off ...")
-            setText(" R@G off ")
-            digitalWrite(ledR,0)		# self checking
-            digitalWrite(ledG,0)		# 
-            time.sleep(3)
+    time.sleep(5)
 
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
-        if (objDist > 1) and (objDist <100) :
+        if (objDist > 15) and (objDist <100) :
             occupy = True
-        else :
-            occupy = False
         timeNow = datetime.now()
         if moneyLeft:
             if (timeNow != timePre ) :
@@ -122,8 +97,6 @@ if __name__ == '__main__':
             moneyLeft = moneyLeft + 25        
         timeLeft = (moneyCredit + moneyLeft)/rate
         moneyCredit = 0
-        setText("MoneyL:%3d cnts\nDist: %3d cm"%(moneyLeft, objDist))
-        time.sleep(1)
 
 # State Machine Logic:
         if state == "Idle":
@@ -138,26 +111,23 @@ if __name__ == '__main__':
         elif state == "Loading":
             setRGB(50,128,128)
             setText("Coin and Email:")
-            time.sleep(2)
             digitalWrite(ledR,1)		# Send High to switch on Red LED 
-            digitalWrite(ledG,1)            
+            digitalWrite(ledG,0)            
             # check the potentiiometer value: total 5 different emails.
             potenVal = grovepi.analogRead(potentiometer)
             emailIndex = potenVal // 210
             email = emails[emailIndex]
             setText("Time left: \n%4d min"%(timeLeft))
-            if (time1MCnt > 3) :
+            if (time1MCnt > 60) :
                 time1MCnt = 0
                 if (occupy and (moneyLeft !=0)):
-                    newstate = "Safe" 
-                    setText("Email: \n%s "%(email))
-                    time.sleep(1)
-                    client.publish("xchen335/email", email+str(moneyLeft)) #Publish the email info (need timestart?)
+                    newstate = "Safe"                    
+                    #client.publish("xchen335/email", email) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
-                    client.publish("xchen335/email", "fine"+email) #Publish the email info ("fine means take ticket")
+                    #client.publish("xchen335/email", "fine") #Publish the email info ("fine means take ticket")
                 elif (not occupy) and (moneyLeft !=0):
-                    client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                    #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                     newstate = "Empty"
                 else :
                     newstate = "Idle"
@@ -169,7 +139,7 @@ if __name__ == '__main__':
             if (occupy and (moneyLeft ==0)):
                 newstate = "Loading"
             elif ((not occupy) and (moneyLeft !=0)):
-                client.publish("xchen335/email", "null"+email) #Publish the email info ("null means remove the email")
+                #client.publish("xchen335/email", "null") #Publish the email info ("null means remove the email")
                 newstate = "Empty"
             elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = "Idle"
@@ -198,7 +168,7 @@ if __name__ == '__main__':
             elif ((not occupy) and (moneyLeft !=0)): 
                 newstate = "Empty"  
 #End of the Logic.
-        setText("State: %s\n NewSta: %s"%(state, newstate))
+
         if (state != newstate) :
             state = newstate
         elif (state == "Loading") :
