@@ -130,6 +130,7 @@ if __name__ == '__main__':
             potenVal = grovepi.analogRead(potentiometer)
             emailIndex = potenVal // 210
             email = emails[emailIndex]
+            print("Selecting Email: " + email)
             setText("Time left: \n%4d min"%(timeLeft))
             time.sleep(2)
             if (time1MCnt > 6) :
@@ -138,7 +139,7 @@ if __name__ == '__main__':
                     newstate = "Safe" 
                     #setText("Email: \n%s "%(email))
                     #time.sleep(1)
-                    print("Email: " + email)
+                    print("Sent Email: " + email)
                     client.publish("xchen335/email", email+":"+str(int(timeLeft))+":"+newstate) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
@@ -187,8 +188,9 @@ if __name__ == '__main__':
                 newstate = "Empty"  
 #End of the Logic.
         #setText("State: %s\n NewSta: %s"%(state, newstate))
-        print("State: " + state + " Newstate: " + newstate)
+        #print("State: " + state + " Newstate: " + newstate)
         if (state != newstate) :
+            print("State: " + state + " Newstate: " + newstate)
             state = newstate
         elif (state == "Loading") :
             time1MCnt = time1MCnt +1
@@ -197,14 +199,14 @@ if __name__ == '__main__':
 
 
         
-        # print("delete this line") Below is from Lab5
+        """# print("delete this line") Below is from Lab5
         objDist = grovepi.ultrasonicRead(ultras)
         client.publish("xchen335/ultrasonicRanger", objDist)
 
         if (grovepi.digitalRead(buttonA) == 1): # Press= 1. no press =0
             client.publish("xchen335/button", 'Y')
         else:
-            client.publish("xchen335/button", 'N')         
+            client.publish("xchen335/button", 'N')"""         
 
         time.sleep(1)        
 
