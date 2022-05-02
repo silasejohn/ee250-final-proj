@@ -43,7 +43,7 @@ def on_generation(client, userdata, message):
         node_serialID = str(message.payload, "utf-8")
         print("Node Serial ID Value: " + node_serialID)
         client.publish(serialIDACK, "ACK:" + node_serialID)
-        print("Published ACK message to master SUB node")
+        print("Published to Topic: " + serialIDACK + " with message of " + "ACK:" + node_serialID)            
         nodeName += node_serialID
         print("Name of this node main topic is: " + nodeName)
         isIDSetup = True
@@ -53,9 +53,8 @@ def redefine_topic_names():
     # take all the original topic names and republish it with the new node name
     global operationalNode
     global nodeName
-    operationalNode = nodeName + "/operationalNode"
-    client.publish(operationalNode, nodeName + " is currently active")
-    print("Published operational status to master subscription node")
+    # operationalNode = nodeName + "/operationalNode"
+
     
 """
 def on_press(key):
@@ -86,6 +85,9 @@ if __name__ == '__main__':
         if (isIDSetup and canRedefine):
             redefine_topic_names()
             canRedefine = False
-            
+        print("Nodename is: " + nodeName)
+        operationalNode = str(nodeName) + "/operationalNode"
+        client.publish(operationalNode, (nodeName + " is currently active"))
+        print("Published to Topic: " + operationalNode + " with message of " + (nodeName + " is currently active"))            
         time.sleep(1)
             
