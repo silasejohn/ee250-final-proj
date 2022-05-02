@@ -91,15 +91,17 @@ if __name__ == '__main__':
 
     # LCD Initialization Text "
     setRGB(50,128,128) # set to light blue
-    setText("EE 250 Final Project")
-    time.sleep(1)
+    setText("EE 250\nFinal Project")
+    time.sleep(2)
     setText("Group Members: \nJoseph Silas Max")
-    time.sleep(1)
-    setText("Initializing\n LED ON")
+    time.sleep(2)
+    setRGB(0,128,0) # set to light blue
+    setText("Initializing\nLED ON")
     digitalWrite(ledR,1)		# self checking
     digitalWrite(ledG,1)
     time.sleep(2)		
-    setText("Initializing\n LED OFF")
+    setRGB(128,0,0) # set to light blue
+    setText("Initializing\nLED OFF")
     digitalWrite(ledR,0)		# self checking
     digitalWrite(ledG,0)	
     time.sleep(1)
