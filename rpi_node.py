@@ -95,20 +95,22 @@ if __name__ == '__main__':
     time.sleep(2)
     setText("Group Members: \nJoseph Silas Max")
     time.sleep(2)
-    setRGB(0,128,0) # set to light blue
+    setRGB(0,128,0) # set to GREEN
     setText("Initializing\nLED ON")
     digitalWrite(ledR,1)		# self checking
     digitalWrite(ledG,1)
     time.sleep(2)		
-    setRGB(128,0,0) # set to light blue
+    setRGB(128,0,0) # set to RED
     setText("Initializing\nLED OFF")
     digitalWrite(ledR,0)		# self checking
     digitalWrite(ledG,0)	
+    time.sleep(1)    
+    setRGB(50,128,128) # set to light blue
+    setText("System is Ready")
     time.sleep(1)
 	
-
-    """
     while True:
+        """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
             occupy = True
