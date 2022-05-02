@@ -31,7 +31,7 @@ from grove_rgb_lcd import *
 ###############
 # Global Vars #
 ###############
-numQuartersInserted = 0
+totalMoneyInserted = 0
 moneyLeft = False
 carExists = False
 nodeState = 0
@@ -49,7 +49,6 @@ serialIDACK = "masterNode/serialIDACK"
 ###############
 ## Functions ##
 ###############
-
 
 def on_connect(client, userdata, flags, rc):
     # subscribe to the serialID generation topic here
@@ -135,14 +134,12 @@ if __name__ == '__main__':
     setRGB(50,128,128) # set to light blue
     setText("System is Ready")
     time.sleep(1)
-	
+
+    time_counter = 0
     while True:
         # Button Logic #
         if (grovepi.digitalRead(buttonA) == 1):
-            totalMoneyInserted+=25 
-            print("Total Money Inserted: " + str(totalMoneyInserted))
-            client.publish("parkingNode/credit", totalMoneyInserted) 
-            totalMoneyInserted = 0
+            totalMoneyInserted += 25 
 
         # Rangefinder Logic #
         objDist = grovepi.ultrasonicRead(ultras)
@@ -155,7 +152,14 @@ if __name__ == '__main__':
             pubtopic_carExists = "parkingNode" + node_serialID + "/carExists"
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
             print("Published Topic: " + pubtopic_carExists + " with message " + str(carExists))
-            
+        
+        time.sleep(1)
+        time_counter += 1
+        if (time_counter >= 10):
+            time_counter = 0
+            pubtopic_nodeMoneyInserted = nodeName + node_serialID + "/nodeMoneyInserted"
+            client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
+            print("Published Topic: " + pubtopic_carExists + "with a message of " + str(totalMoneyInserted))
         """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
@@ -279,5 +283,4 @@ if __name__ == '__main__':
         #     client.publish("xchen335/button", 'Y')
         # else:
         #     client.publish("xchen335/button", 'N')        
-        """
-    time.sleep(1)   
+        """   

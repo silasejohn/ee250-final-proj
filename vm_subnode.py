@@ -32,16 +32,12 @@ def on_connect(client, userdata, flags, rc):
     counter = 0
     while (counter < 10):
         # topic that reports the status of an node (parking spot)
-        topic_operationalNode = "testNode" + str(counter) + "/operationalNode"
         topic_nodeMoneyInserted = "testNode" + str(counter) + "/nodeMoneyInserted"
         subtopic_carExists = "parkingNode" + str(counter) + "/carExists"
-        client.subscribe(topic_operationalNode)
         client.subscribe(topic_nodeMoneyInserted)
         client.subscribe(subtopic_carExists)
-        print("Subscriped to Topic: " + topic_operationalNode)
         print("Subscriped to Topic: " + topic_nodeMoneyInserted)
         print("Subscribed to Topic: " + subtopic_carExists)
-        client.message_callback_add(topic_operationalNode, on_operational_node)
         client.message_callback_add(topic_nodeMoneyInserted, on_money_insert)
         client.message_callback_add(subtopic_carExists, on_car_existance)
 
