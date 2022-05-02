@@ -71,9 +71,12 @@ if __name__ == '__main__':
     ledG = 7 # Port of the led installed
     emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
 
+    totalMoneyInserted = 0
+    isParkingSpaceOccupied = False
+    nodeSerialID = 0
+
     occupy = False
     moneyLeft = 0 # unit: cent
-    totalMoneyInserted = 0
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
@@ -113,10 +116,17 @@ if __name__ == '__main__':
         # Button Logic #
         if (grovepi.digitalRead(buttonA) == 1):
             totalMoneyInserted+=25 
-            print("Total Money Inserted: " + totalMoneyInserted)
+            print("Total Money Inserted: " + str(totalMoneyInserted))
             client.publish("parkingNode/credit", totalMoneyInserted) 
             totalMoneyInserted = 0
 
+        # Rangefinder Logic #
+        objDist = grovepi.ultrasonicRead(ultras)
+        if (objDist > 1) and (objDist < 100) :
+            isParkingSpaceOccupied = True
+        else :
+            isParkingSpaceOccupied = False
+            
         """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :

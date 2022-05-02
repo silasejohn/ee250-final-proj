@@ -5,14 +5,30 @@ import paho.mqtt.client as mqtt
 import time
 from pynput import keyboard
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected to server (i.e., broker) with result code "+str(rc))
+serialIDGen = "masterNode/serialID"
+serialIDACK = "masterNode/serialIDACK"
+node_serialID = None
+isIDSetup = False
 
-    #subscribe to topics of interest here
+def on_connect(client, userdata, flags, rc):
+    print("Connected to server (i.e., broker) with result code " + str(rc))
+        
+    # subscribe to the serialID generation topic here
+    if (not isIDSetup):
+        client.subscribe(serialIDGen) 
+        client.message_callback_add(serialIDGen, on_generation) 
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
+
+def on_generation(client, userdata, message):   
+    global node_serialID 
+    node_serialID = str(message.payload, "utf-8")
+    print("Master Serial ID Value: " + node_serialID)
+    client.publish(serialIDACK, "ACK:" + node_serialID)
+    isIDSetup = True
+
 
 def on_press(key):
     try: 
