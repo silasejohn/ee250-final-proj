@@ -32,7 +32,7 @@ def on_connect(client, userdata, flags, rc):
     counter = 0
     while (counter < 10):
         # topic that reports the status of an node (parking spot)
-        topic_nodeMoneyInserted = "testNode" + str(counter) + "/nodeMoneyInserted"
+        topic_nodeMoneyInserted = "parkingNode" + str(counter) + "/nodeMoneyInserted"
         subtopic_carExists = "parkingNode" + str(counter) + "/carExists"
         client.subscribe(topic_nodeMoneyInserted)
         client.subscribe(subtopic_carExists)
@@ -75,16 +75,15 @@ def on_money_insert(client, userdata, message):
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     nodeMoneyInserted[int(message_split[0])] = int(message_split[1])
-    for i in nodeMoneyInserted:
-        print("money available is " + str(i))
+    print("money available is " + str(message_split[1]) + " for node " + message_split[0])
+
 
 def on_car_existance(client, userdata, message):
     global carExistance
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     carExistance[int(message_split[0])] = message_split[1]
-    for i in carExistance:
-        print("car exists is " + str(i))
+    # print("car exists " + str(message_split[1]) + " for node " + message_split[0])
 
 """
 def on_Email(client, userdata, message):     

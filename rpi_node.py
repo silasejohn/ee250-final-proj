@@ -60,6 +60,8 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
+# custom callbacks go here # 
+
 # generation code only happens once
 def on_generation(client, userdata, message):
     global isIDSetup
@@ -74,23 +76,6 @@ def on_generation(client, userdata, message):
         nodeName += node_serialID
         print("Name of this node main topic is: " + nodeName)
         isIDSetup = True
-    
-# Custom Callbacks #
-def on_LCD(client, userdata, message):     
-    # Print on terminal # 
-    print(subTopicOne + " Command Received: " + str(message.payload, "utf-8") )
-
-    # Perform Physical Actions #
-    setRGB(50,128,128)
-    setText("Received letter: %c" % (str(message.payload, "utf-8")))  
-
-def pay_online(client, userdata, message):
-
-    global moneyCredit # declare variable to be global, and not local
-
-    # Print on Terminal #
-    addedMoney = str(message.payload, "utf-8")
-    print(subTopicTwo + " Command Received (added money): " + addedMoney)
 
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
