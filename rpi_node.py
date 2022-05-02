@@ -60,16 +60,9 @@ def pay_online(client, userdata, message):
     global moneyCredit # declare variable to be global, and not local
 
     # Print on Terminal #
-    print(subTopicTwo + " Command Received: " + str(message.payload, "utf-8") )
-    print("Command online paied: " + str(message.payload, "utf-8") ) #Maxc
-    paied = str(message.payload, "utf-8")
-    #setRGB(50,128,80)
-    #setText("Received money:  %s cent"%(paied)) 
-    #time.sleep(2)
-    moneyCredit = int(paied)
+    addedMoney = str(message.payload, "utf-8")
+    print(subTopicTwo + " Command Received (added money): " + addedMoney)
     #setText("Received int:  %d cent"%(moneyCredit))
-    print("Received money: " + paied + " cents.")
-    #time.sleep(2)    
 
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
@@ -99,11 +92,12 @@ if __name__ == '__main__':
     setRGB(50,128,128)
     setText("EE250 FinalProj\nJoseph Silas Max")
     digitalWrite(ledR,1)		# self checking
-    digitalWrite(ledG,1)		# 
+    digitalWrite(ledG,1)		
     time.sleep(3)
     digitalWrite(ledR,0)		# self checking
-    digitalWrite(ledG,0)		# 
+    digitalWrite(ledG,0)		
 
+    """
     while True:
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
@@ -229,3 +223,4 @@ if __name__ == '__main__':
             client.publish("xchen335/button", 'N')"""         
 
         time.sleep(1)   
+    """
