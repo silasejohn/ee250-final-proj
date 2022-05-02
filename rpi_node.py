@@ -156,7 +156,8 @@ if __name__ == '__main__':
         
         # Button Logic #
         if (grovepi.digitalRead(buttonA) == 1):
-            timePre = datetime.now()
+            if (totalMoneyInserted is 0):
+                timePre = datetime.now()
             totalMoneyInserted += 25 
             setText("\nInput Money: " + str(totalMoneyInserted))
             pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
