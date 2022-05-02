@@ -14,7 +14,8 @@ serialIDGen = "masterNode/serialID"
 
 # published topics
 serialIDACK = "masterNode/serialIDACK"
-operationalNode = "masterNode/operationalNode"
+operationalNode = "testNode/operationalNode"
+nodeMoneyInserted = "testNode/nodeMoneyInserted"
 
 nodeName = "testNode"
 node_serialID = None
@@ -48,15 +49,8 @@ def on_generation(client, userdata, message):
         print("Name of this node main topic is: " + nodeName)
         isIDSetup = True
         canRedefine = True
-
-def redefine_topic_names():
-    # take all the original topic names and republish it with the new node name
-    global operationalNode
-    global nodeName
-    # operationalNode = nodeName + "/operationalNode"
-
     
-"""
+
 def on_press(key):
     try: 
         k = key.char # single-char keys
@@ -64,15 +58,15 @@ def on_press(key):
         k = key.name # other keys
     
     if k == 'm':
-        client.publish("parkingNode/lcd", "m")
-        print("Added (hard reset) 25 cents")
-        client.publish("parkingNode/credit", "25")
-"""
+        global node_serialID
+        nodeMoneyInserted = "testNode" + node_serialID + "/nodeMoneyInserted"
+        print("Published to Topic: " + nodeMoneyInserted + " with message of adding 25 cents")
+        client.publish(nodeMoneyInserted, node_serialID)
 
 if __name__ == '__main__':
     #setup the keyboard event listener
-    # lis = keyboard.Listener(on_press=on_press)
-    # lis.start() # start to listen on a separate thread
+    lis = keyboard.Listener(on_press=on_press)
+    lis.start() # start to listen on a separate thread
 
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
@@ -81,13 +75,14 @@ if __name__ == '__main__':
     client.connect(host="eclipse.usc.edu", port=1883, keepalive=60)
     client.loop_start()
 
+    step_counter = 0
+
     while True:
-        if (isIDSetup and canRedefine):
-            redefine_topic_names()
-            canRedefine = False
-        print("Nodename is: " + nodeName)
-        operationalNode = str(nodeName) + "/operationalNode"
-        client.publish(operationalNode, (nodeName + " is currently active"))
-        print("Published to Topic: " + operationalNode + " with message of " + (nodeName + " is currently active"))            
+        if (step_counter % 5):
+            operationalNode = str(nodeName) + "/operationalNode"
+            client.publish(operationalNode, (nodeName + " is currently active"))
+            # print("Published to Topic: " + operationalNode + " with message of " + (nodeName + " is currently active"))
+        
+        step_counter += 1           
         time.sleep(1)
             
