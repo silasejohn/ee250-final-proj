@@ -98,6 +98,11 @@ if __name__ == '__main__':
     ledG = 7 # Port of the led installed
     # emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
 
+    digitalWrite(ledR,0)
+    digitalWrite(ledG,0)
+    setRGB(0, 0, 0)
+    setText("")
+
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
