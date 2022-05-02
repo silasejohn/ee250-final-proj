@@ -9,15 +9,14 @@ import time
 #################
 serialID = 0
 isSerialIDChanged = True
-numQuarters = [0] * 10 # initilize the number of quarters per machine as 0
+nodeMoneyInserted = [0] * 10 # initilize the number of quarters per machine as 0
+carExistance = [0] * 10 # initialize the existances to false (or 0)
 
 # published topics
 serialID_gen = "masterNode/serialID"
 
 # subscribed topics
 serialIDACK = "masterNode/serialIDACK"
-topic_operationalNode = "masterNode/operationalNode"
-
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code " + str(rc))
@@ -35,25 +34,20 @@ def on_connect(client, userdata, flags, rc):
         # topic that reports the status of an node (parking spot)
         topic_operationalNode = "testNode" + str(counter) + "/operationalNode"
         topic_nodeMoneyInserted = "testNode" + str(counter) + "/nodeMoneyInserted"
+        subtopic_carExists = "parkingNode" + str(counter) + "/carExists"
         client.subscribe(topic_operationalNode)
         client.subscribe(topic_nodeMoneyInserted)
+        client.subscribe(subtopic_carExists)
         print("Subscriped to Topic: " + topic_operationalNode)
         print("Subscriped to Topic: " + topic_nodeMoneyInserted)
+        print("Subscribed to Topic: " + subtopic_carExists)
         client.message_callback_add(topic_operationalNode, on_operational_node)
         client.message_callback_add(topic_nodeMoneyInserted, on_money_insert)
+        client.message_callback_add(subtopic_carExists, on_car_existance)
 
         counter += 1
 
-
     """
-    #subscribe to the ultrasonic ranger topic here
-    client.subscribe("parkingNode/ultrasonicRanger") #Maxc
-    client.message_callback_add("parkingNode/ultrasonicRanger", on_Ranger) #Maxc
-
-    # subscribe to the button topic here
-    client.subscribe("parkingNode/button") #Maxc
-    client.message_callback_add("parkingNode/button", on_Button) #Maxc
-
     # subscribe to the email topic here
     client.subscribe("parkingNode/email") #Maxc
     client.message_callback_add("parkingNode/email", on_Email) #Maxc
@@ -63,11 +57,6 @@ def on_connect(client, userdata, flags, rc):
 # Default message callback (if we recieve messages for something we don't know how to deal with)
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
-
-def on_Ranger(client, userdata, message):    
-    # Action for Ranger message is printing out the value.
-    print("RangeFinder Value: " + str(message.payload, "utf-8") + " cm")
-
 
 # action for recieving confirmation that serial ID is assigned
 def on_generation_ACK(client, userdata, message):
@@ -84,27 +73,24 @@ def on_generation_ACK(client, userdata, message):
     print("\nNew Serial ID Value: " + str(serialID))
     isSerialIDChanged = True
 
-# actions for display when checking availablity of a parking lot
-def on_operational_node(client, userdata, message):
-    operational_message = str(message.payload, "utf-8")
-    # print(operational_message)
-
 # actions for when a quarter is inserted into a node parking meter
 def on_money_insert(client, userdata, message):
-    global numQuarters
+    global nodeMoneyInserted
     message = str(message.payload, "utf-8")
-    numQuarters[int(message)] += 1
-    for i in numQuarters:
-        print("Element is " + str(i))
+    message_split = message.split(":")
+    nodeMoneyInserted[int(message_split[0])] = int(message_split[1])
+    for i in nodeMoneyInserted:
+        print("money available is " + str(i))
+
+def on_car_existance(client, userdata, message):
+    global carExistance
+    message = str(message.payload, "utf-8")
+    message_split = message.split(":")
+    carExistance[int(message_split[0])] = message_split[1]
+    for i in carExistance:
+        print("car exists is " + str(i))
 
 """
-def on_Button(client, userdata, message):  
-    # Action for Button message is printing out if the button pressed.
-    if (str(message.payload, "utf-8") == 'Y'):
-        print("Button pressed!")
-    else:
-        print("Button not pressed!")
-
 def on_Email(client, userdata, message):     
     # Action for email message is printing out the string.
     print("Received email info:" + str(message.payload, "utf-8") ) #Maxc
