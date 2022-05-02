@@ -14,7 +14,6 @@ serialIDGen = "masterNode/serialID"
 
 # published topics
 serialIDACK = "masterNode/serialIDACK"
-operationalNode = "testNode/operationalNode"
 nodeMoneyInserted = "testNode/nodeMoneyInserted"
 
 nodeName = "testNode"
@@ -48,7 +47,6 @@ def on_generation(client, userdata, message):
         nodeName += node_serialID
         print("Name of this node main topic is: " + nodeName)
         isIDSetup = True
-        canRedefine = True
     
 
 def on_press(key):

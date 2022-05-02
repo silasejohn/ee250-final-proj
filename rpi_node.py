@@ -5,6 +5,15 @@ import paho.mqtt.client as mqtt
 import time
 from datetime import datetime
 
+"""
+State Machine
+Insert Quarters
+
+If button is pressed, add one quarter
+
+
+"""
+
 ###############
 ### IMPORTS ### 
 ###############
@@ -22,14 +31,17 @@ from grove_rgb_lcd import *
 ###############
 # Global Vars #
 ###############
-
-moneyCredit = 0 # Global variable. Subscribe the online payment info from the Center
+numQuartersInserted = 0
+moneyLeft = False
+carExists = False
+nodeState = 0
+activationState = False
 nodeName = "parkingNode"
+node_serialID = None # inits to a number
+isIDSetup = False # turns true once node serialID is given an integer
 
 # subscriped topics 
 serialIDGen = "masterNode/serialID"
-subTopicOne = "parkingNode/lcd"
-subTopicTwo = "parkingNode/credit"
 
 # published topics
 serialIDACK = "masterNode/serialIDACK"
@@ -38,22 +50,32 @@ serialIDACK = "masterNode/serialIDACK"
 ## Functions ##
 ###############
 
+
 def on_connect(client, userdata, flags, rc):
-    print("Connected to server (i.e., broker) with result code " + str(rc))
-    time.sleep(.1)
-
-    # Subscribe Topic 1: parkingNode/lcd ~> on_LCD
-    client.subscribe(subTopicOne)
-    client.message_callback_add(subTopicOne, on_LCD)
-
-    # Subscribe Topic 2: parkingNode/credit ~> pay_online
-    client.subscribe(subTopicTwo)
-    client.message_callback_add(subTopicTwo, pay_online)
+    # subscribe to the serialID generation topic here
+    client.subscribe(serialIDGen) 
+    print("Subscribed to master serial ID generation")
+    client.message_callback_add(serialIDGen, on_generation)
 
 # Default message callback # 
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
+# generation code only happens once
+def on_generation(client, userdata, message):
+    global isIDSetup
+    global nodeName
+    global canRedefine
+    if (not isIDSetup):
+        global node_serialID 
+        node_serialID = str(message.payload, "utf-8")
+        print("Node Serial ID Value: " + node_serialID)
+        client.publish(serialIDACK, "ACK:" + node_serialID)
+        print("Published to Topic: " + serialIDACK + " with message of " + "ACK:" + node_serialID)            
+        nodeName += node_serialID
+        print("Name of this node main topic is: " + nodeName)
+        isIDSetup = True
+    
 # Custom Callbacks #
 def on_LCD(client, userdata, message):     
     # Print on terminal # 
@@ -77,14 +99,8 @@ if __name__ == '__main__':
     potentiometer = 2 # Analog port 2, see Lab6 code.
     ledR = 3 # Port of the led installed
     ledG = 7 # Port of the led installed
-    emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
+    # emails = ["xchen335@usc.edu", "abc-1@usc.edu", "abc-2@usc.edu", "abc-3@usc.edu", "abc-4@usc.edu"]
 
-    totalMoneyInserted = 0
-    isParkingSpaceOccupied = False
-    nodeSerialID = 0
-
-    occupy = False
-    moneyLeft = 0 # unit: cent
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
@@ -100,7 +116,7 @@ if __name__ == '__main__':
     client.connect(host="eclipse.usc.edu", port=1883, keepalive=60) # port=1883
     client.loop_start()
 
-    # LCD Initialization Text "
+    # LCD Initialization Text #
     setRGB(50,128,128) # set to light blue
     setText("EE 250\nFinal Project")
     time.sleep(2)
@@ -130,10 +146,15 @@ if __name__ == '__main__':
 
         # Rangefinder Logic #
         objDist = grovepi.ultrasonicRead(ultras)
-        if (objDist > 1) and (objDist < 100) :
-            isParkingSpaceOccupied = True
-        else :
-            isParkingSpaceOccupied = False
+        oldCarExists = carExists
+        if (objDist > 1) and (objDist < 100):
+            carExists = True
+        else:
+            carExists = False
+        if (oldCarExists is not carExists):
+            pubtopic_carExists = "parkingNode" + node_serialID + "/carExists"
+            client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
+            print("Published Topic: " + pubtopic_carExists + " with message " + str(carExists))
             
         """
         objDist = grovepi.ultrasonicRead(ultras)
