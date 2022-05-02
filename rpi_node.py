@@ -159,7 +159,7 @@ if __name__ == '__main__':
             time_counter = 0
             pubtopic_nodeMoneyInserted = nodeName + node_serialID + "/nodeMoneyInserted"
             client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
-            print("Published Topic: " + pubtopic_carExists + "with a message of " + str(totalMoneyInserted))
+            print("Published Topic: " + pubtopic_nodeMoneyInserted + "with a message of " + str(totalMoneyInserted))
         """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
