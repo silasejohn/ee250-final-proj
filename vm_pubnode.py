@@ -21,11 +21,9 @@ def on_press(key):
         k = key.name # other keys
     
     if k == 'm':
-        print("Add money publised")
-        # send 10 cent to rpi
         client.publish("parkingNode/lcd", "m")
-        # send "LED_OFF"
-        client.publish("parkingNode/credit", "10")
+        print("Added (hard reset) 25 cents")
+        client.publish("parkingNode/credit", "25")
 
 
 if __name__ == '__main__':
