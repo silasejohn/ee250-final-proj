@@ -24,8 +24,15 @@ from grove_rgb_lcd import *
 ###############
 
 moneyCredit = 0 # Global variable. Subscribe the online payment info from the Center
+nodeName = "parkingNode"
+
+# subscriped topics 
+serialIDGen = "masterNode/serialID"
 subTopicOne = "parkingNode/lcd"
 subTopicTwo = "parkingNode/credit"
+
+# published topics
+serialIDACK = "masterNode/serialIDACK"
 
 ###############
 ## Functions ##
@@ -33,6 +40,7 @@ subTopicTwo = "parkingNode/credit"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code " + str(rc))
+    time.sleep(.1)
 
     # Subscribe Topic 1: parkingNode/lcd ~> on_LCD
     client.subscribe(subTopicOne)
