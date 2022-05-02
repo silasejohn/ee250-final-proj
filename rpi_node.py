@@ -214,13 +214,13 @@ if __name__ == '__main__':
 
 
         
-        """# print("delete this line") Below is from Lab5
-        objDist = grovepi.ultrasonicRead(ultras)
-        client.publish("xchen335/ultrasonicRanger", objDist)
-        if (grovepi.digitalRead(buttonA) == 1): # Press= 1. no press =0
-            client.publish("xchen335/button", 'Y')
-        else:
-            client.publish("xchen335/button", 'N')"""         
+        # print("delete this line") Below is from Lab5
+        # objDist = grovepi.ultrasonicRead(ultras)
+        # client.publish("xchen335/ultrasonicRanger", objDist)
+        # if (grovepi.digitalRead(buttonA) == 1): # Press= 1. no press =0
+        #     client.publish("xchen335/button", 'Y')
+        # else:
+        #     client.publish("xchen335/button", 'N')        
 
-        time.sleep(1)   
+        # time.sleep(1)   
     """
