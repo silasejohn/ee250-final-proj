@@ -156,6 +156,7 @@ if __name__ == '__main__':
         
         # Button Logic #
         if (grovepi.digitalRead(buttonA) == 1):
+            timePre = datetime.now()
             totalMoneyInserted += 25 
             setText("\nInput Money: " + str(totalMoneyInserted))
             pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
@@ -191,7 +192,7 @@ if __name__ == '__main__':
         if (nodeState is "IDLE"):
             digitalWrite(ledR,0)
             digitalWrite(ledG,0)
-            setRGB(0, 0, 128)
+            setRGB(50,128,128)
             setText("Welcome! \nOpen Spot")
         elif (nodeState is "LOADING"):
             digitalWrite(ledR,1)
@@ -202,7 +203,13 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(0, 128, 0)
-            setText("Time Left: ")
+            timeAllotted = totalMoneyInserted * 10
+            timeDiff = (datetime.now()-timePre).total_seconds()
+            if (timeDiff > timeAllotted):  
+                nodeState = "LOADING"
+                totalMoneyInserted = 0 
+            timeLeft = timeAllotted - timeDiff
+            setText("Time Left: " + str(timeLeft))
             # display time left
         elif (nodeState is "EMPTY"):
             digitalWrite(ledR,0)
