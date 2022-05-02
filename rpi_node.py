@@ -126,9 +126,9 @@ if __name__ == '__main__':
         if (grovepi.digitalRead(buttonA) == 1):
             totalMoneyInserted += 25 
             setText(nodeName + "\nInputted Money: " + str(totalMoneyInserted))
-            pubtopic_nodeMoneyInserted = nodeName + node_serialID + "/nodeMoneyInserted"
+            pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
             client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
-            print("Published Topic: " + pubtopic_nodeMoneyInserted + "with a message of " + str(totalMoneyInserted))
+            print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
         
         # Rangefinder Logic #
         objDist = grovepi.ultrasonicRead(ultras)
