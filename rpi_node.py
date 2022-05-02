@@ -183,6 +183,31 @@ if __name__ == '__main__':
 
         print("Current State: " + nodeState)
 
+        if (nodeState is "IDLE"):
+            digitalWrite(ledR,0)
+            digitalWrite(ledG,0)
+            setRGB(0, 0, 128)
+            setText("Welcome! \nOpen Spot")
+        elif (nodeState is "LOADING"):
+            digitalWrite(ledR,1)
+            digitalWrite(ledG,0)
+            setRGB(128, 0, 0)
+            setText("Enter Money!!!")
+        elif (nodeState is "SAFE"):
+            digitalWrite(ledR,0)
+            digitalWrite(ledG,1)
+            setRGB(0, 128, 0)
+            setText("Time Left: ")
+            # display time left
+        elif (nodeState is "EMPTY"):
+            digitalWrite(ledR,0)
+            digitalWrite(ledG,1)
+            setRGB(128, 128, 0)
+            setText("Clearing Extra\nMoney . . .")
+            time.sleep(3)
+            totalMoneyInserted = 0
+
+
         time.sleep(.01)
         time_counter += 1
         if (time_counter >= 10):
