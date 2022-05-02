@@ -103,9 +103,14 @@ if __name__ == '__main__':
                     moneyLeft = 0
         if (grovepi.digitalRead(buttonA) == 1):
             moneyLeft = moneyLeft + 25        
-        moneyLeft = moneyCredit + moneyLeft
-        moneyCredit = 0
-        timeLeft = moneyLeft/rate
+        if moneyCredit:
+            moneyLeft = moneyCredit + moneyLeft
+            moneyCredit = 0
+            timeLeft = moneyLeft/rate +1
+            client.publish("xchen335/email", "ACK"+":"+str(int(timeLeft))+":"+state) #The ACK for the online payment.
+        timeLeft = moneyLeft/rate + 1
+        if moneyLeft==0 :
+            timeLeft = 0
 
         #setText("MoneyL:%3d cnts\nDist: %3d cm"%(moneyLeft, objDist))
         #time.sleep(1)
