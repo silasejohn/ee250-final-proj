@@ -8,13 +8,18 @@ import time
 ## Global Vars ##
 #################
 serialID = 0
+isSerialIDChanged = True
+
+# published topics
 serialID_gen = "masterNode/serialID"
+
+# subscribed topics
 serialIDACK = "masterNode/serialIDACK"
-isSerialOpenForInit = True
 
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code " + str(rc))
+    time.sleep(.1)
 
     client.subscribe(serialIDACK)
     client.message_callback_add(serialIDACK, on_generation_ACK)
@@ -34,7 +39,7 @@ def on_connect(client, userdata, flags, rc):
     """
 
 
-#D efault message callback. Please use custom callbacks.
+# Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
@@ -45,15 +50,15 @@ def on_Ranger(client, userdata, message):
 def on_generation_ACK(client, userdata, message):
     # action for recieving confirmation that serial ID is assigned
     global serialID
-    global isSerialOpenForInit
+    global isSerialIDChanged
     
     # code to check the ACK serialID, and increment it by one
     print("Current Serial ID: " + str(serialID))
     ack_message = str(message.payload, "utf-8")
-    print("ACK Message: " + ack_message)
+    print("INITIALIZED NEW NODE: " + ack_message)
     serialID += 1
-    print("New Serial ID: " + str(serialID))
-    isSerialOpenForInit = True
+    print("\nNew Serial ID Value: " + str(serialID))
+    isSerialIDChanged = True
 
 """
 def on_Button(client, userdata, message):  
@@ -77,7 +82,8 @@ if __name__ == '__main__':
     client.loop_start()
 
     while True:
-        if(isSerialOpenForInit):
-            client.publish(serialID_gen, str(serialID))
-            isSerialOpenForInit = False
+        client.publish(serialID_gen, str(serialID))
+        if(isSerialIDChanged):
+            print ("Published SerialID: " + str(serialID))
+            isSerialIDChanged = False
         time.sleep(.1)

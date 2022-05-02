@@ -5,31 +5,45 @@ import paho.mqtt.client as mqtt
 import time
 from pynput import keyboard
 
+#################
+## GLOBAL VARS ##
+#################
+
+# subscriped topics 
 serialIDGen = "masterNode/serialID"
+
+# published topics
 serialIDACK = "masterNode/serialIDACK"
+
 node_serialID = None
-isIDSetup = False
+isIDSetup = False # turns true once node serialID is given an integer
+
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code " + str(rc))
         
     # subscribe to the serialID generation topic here
-    if (not isIDSetup):
-        client.subscribe(serialIDGen) 
-        client.message_callback_add(serialIDGen, on_generation) 
+    client.subscribe(serialIDGen) 
+    print("Subscribed to master serial ID generation")
+    client.message_callback_add(serialIDGen, on_generation) 
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
-def on_generation(client, userdata, message):   
-    global node_serialID 
-    node_serialID = str(message.payload, "utf-8")
-    print("Master Serial ID Value: " + node_serialID)
-    client.publish(serialIDACK, "ACK:" + node_serialID)
-    isIDSetup = True
+# generation code only happens once
+def on_generation(client, userdata, message):
+    global isIDSetup
+    if (not isIDSetup):
+        global node_serialID 
+        node_serialID = str(message.payload, "utf-8")
+        print("Node Serial ID Value: " + node_serialID)
+        client.publish(serialIDACK, "ACK:" + node_serialID)
+        print("Published ACK message to master SUB node")
+        isIDSetup = True
 
-
+"""
 def on_press(key):
     try: 
         k = key.char # single-char keys
@@ -40,12 +54,12 @@ def on_press(key):
         client.publish("parkingNode/lcd", "m")
         print("Added (hard reset) 25 cents")
         client.publish("parkingNode/credit", "25")
-
+"""
 
 if __name__ == '__main__':
     #setup the keyboard event listener
-    lis = keyboard.Listener(on_press=on_press)
-    lis.start() # start to listen on a separate thread
+    # lis = keyboard.Listener(on_press=on_press)
+    # lis.start() # start to listen on a separate thread
 
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
