@@ -106,7 +106,7 @@ if __name__ == '__main__':
         if moneyCredit:
             moneyLeft = moneyCredit + moneyLeft
             moneyCredit = 0
-            timeLeft = moneyLeft/rate +1
+            timeLeft = moneyLeft/rate
             client.publish("xchen335/email", "ACK"+":"+str(int(timeLeft))+":"+state) #The ACK for the online payment.
         timeLeft = moneyLeft/rate + 1
         if moneyLeft==0 :
