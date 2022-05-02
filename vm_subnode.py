@@ -15,6 +15,7 @@ serialID_gen = "masterNode/serialID"
 
 # subscribed topics
 serialIDACK = "masterNode/serialIDACK"
+operationalNode = "masterNode/operationalNode"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -56,9 +57,21 @@ def on_generation_ACK(client, userdata, message):
     print("Current Serial ID: " + str(serialID))
     ack_message = str(message.payload, "utf-8")
     print("INITIALIZED NEW NODE: " + ack_message)
+    
+    # subscripe to all the new topics here
+    topic_operationalNode = "testnode" + str(serialID) + "/operationalNode"
+    client.subscribe(topic_operationalNode)
+    client.message_callback_add(topic_operationalNode, on_operational_node)
+    print("subscribed to " + topic_operationalNode)
+
+    # increment serial ID
     serialID += 1
     print("\nNew Serial ID Value: " + str(serialID))
     isSerialIDChanged = True
+
+def on_operational_node(client, userdata, message):
+    operational_message = str(message.payload, "utf-8")
+    print(operational_message)
 
 """
 def on_Button(client, userdata, message):  
@@ -86,4 +99,5 @@ if __name__ == '__main__':
         if(isSerialIDChanged):
             print ("Published SerialID: " + str(serialID))
             isSerialIDChanged = False
+            time.sleep(1)
         time.sleep(.1)
