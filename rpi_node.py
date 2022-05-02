@@ -140,7 +140,11 @@ if __name__ == '__main__':
         # Button Logic #
         if (grovepi.digitalRead(buttonA) == 1):
             totalMoneyInserted += 25 
-
+            setText(nodeName + "\nInputted Money: " + str(totalMoneyInserted))
+            pubtopic_nodeMoneyInserted = nodeName + node_serialID + "/nodeMoneyInserted"
+            client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
+            print("Published Topic: " + pubtopic_nodeMoneyInserted + "with a message of " + str(totalMoneyInserted))
+        
         # Rangefinder Logic #
         objDist = grovepi.ultrasonicRead(ultras)
         oldCarExists = carExists
@@ -157,9 +161,6 @@ if __name__ == '__main__':
         time_counter += 1
         if (time_counter >= 10):
             time_counter = 0
-            pubtopic_nodeMoneyInserted = nodeName + node_serialID + "/nodeMoneyInserted"
-            client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
-            print("Published Topic: " + pubtopic_nodeMoneyInserted + "with a message of " + str(totalMoneyInserted))
         """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
