@@ -8,16 +8,16 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
     #subscribe to the ultrasonic ranger topic here
-    client.subscribe("xchen335/ultrasonicRanger") #Maxc
-    client.message_callback_add("xchen335/ultrasonicRanger", on_Ranger) #Maxc
+    client.subscribe("parkingNode/ultrasonicRanger") #Maxc
+    client.message_callback_add("parkingNode/ultrasonicRanger", on_Ranger) #Maxc
 
     #subscribe to the button topic here
-    client.subscribe("xchen335/button") #Maxc
-    client.message_callback_add("xchen335/button", on_Button) #Maxc
+    client.subscribe("parkingNode/button") #Maxc
+    client.message_callback_add("parkingNode/button", on_Button) #Maxc
 
     #subscribe to the email topic here
-    client.subscribe("xchen335/email") #Maxc
-    client.message_callback_add("xchen335/email", on_Email) #Maxc
+    client.subscribe("parkingNode/email") #Maxc
+    client.message_callback_add("parkingNode/email", on_Email) #Maxc
 
 
 #Default message callback. Please use custom callbacks.

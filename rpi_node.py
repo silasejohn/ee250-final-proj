@@ -5,45 +5,62 @@ import paho.mqtt.client as mqtt
 import time
 from datetime import datetime
 
+###############
+### IMPORTS ### 
+###############
+
 import sys
 # By appending the folder of all the GrovePi libraries to the system path here,
 # we are successfully `import grovepi`
 sys.path.append('../../Software/Python/')
 # This append is to support importing the LCD library.
 sys.path.append('../../Software/Python/grove_rgb_lcd')
-
 import grovepi
-
 from grovepi import *
 from grove_rgb_lcd import *
 
+###############
+# Global Vars #
+###############
+
 moneyCredit = 0 # Global variable. Subscribe the online payment info from the Center
+subTopicOne = "parkingNode/lcd"
+subTopicTwo = "parkingNode/credit"
+
+###############
+## Functions ##
+###############
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected to server (i.e., broker) with result code "+str(rc))
+    print("Connected to server (i.e., broker) with result code " + str(rc))
 
-    #subscribe to topics of interest here. Now there are two topics: xchen335/lcd and /credit.
-    client.subscribe("xchen335/lcd") #Maxc
-    client.message_callback_add("xchen335/lcd", on_LCD) #Maxc
+    # Subscribe Topic 1: parkingNode/lcd ~> on_LCD
+    client.subscribe(subTopicOne)
+    client.message_callback_add(subTopicOne, on_LCD)
 
-    client.subscribe("xchen335/credit") #Maxc
-    client.message_callback_add("xchen335/credit", pay_online) #Maxc
+    # Subscribe Topic 2: parkingNode/credit ~> pay_online
+    client.subscribe(subTopicTwo)
+    client.message_callback_add(subTopicTwo, pay_online)
 
-#Default message callback. Please use custom callbacks.
+# Default message callback # 
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
-def on_LCD(client, userdata, message): #Maxc rename from suctom_callback()
-    #the third argument is 'message' here unlike 'msg' in on_message
-    
-    print("Command: " + str(message.payload, "utf-8") ) #Maxc
+# Custom Callbacks #
+def on_LCD(client, userdata, message):     
+    # Print on terminal # 
+    print(subTopicOne + " Command Received: " + str(message.payload, "utf-8") )
+
+    # Perform Physical Actions #
     setRGB(50,128,128)
-    setText("Received letter: %c"%(str(message.payload, "utf-8")))  
+    setText("Received letter: %c" % (str(message.payload, "utf-8")))  
 
-def pay_online(client, userdata, message): #Maxc rename from suctom_callback()
-    #the third argument is 'message' here unlike 'msg' in on_message
-    global moneyCredit
+def pay_online(client, userdata, message):
 
+    global moneyCredit # declare variable to be global, and not local
+
+    # Print on Terminal #
+    print(subTopicTwo + " Command Received: " + str(message.payload, "utf-8") )
     print("Command online paied: " + str(message.payload, "utf-8") ) #Maxc
     paied = str(message.payload, "utf-8")
     #setRGB(50,128,80)
@@ -106,7 +123,7 @@ if __name__ == '__main__':
             moneyLeft = moneyCredit + moneyLeft
             moneyCredit = 0
             timeLeft = moneyLeft/rate
-            client.publish("xchen335/email", "ACK"+":"+str(int(timeLeft))+":"+state) #The ACK for the online payment.
+            client.publish("parkingNode/email", "ACK"+":"+str(int(timeLeft))+":"+state) #The ACK for the online payment.
         timeLeft = moneyLeft/rate + 1
         if moneyLeft==0 :
             timeLeft = 0
@@ -144,13 +161,13 @@ if __name__ == '__main__':
                     #setText("Email: \n%s "%(email))
                     #time.sleep(1)
                     print("Sent Email: " + email)
-                    client.publish("xchen335/email", email+":"+str(int(timeLeft))+":"+newstate) #Publish the email info (need timestart?)
+                    client.publish("parkingNode/email", email+":"+str(int(timeLeft))+":"+newstate) #Publish the email info (need timestart?)
                 elif (occupy and (moneyLeft ==0)):
                     newstate = "Illegal"
-                    client.publish("xchen335/email", email+":fine"+":"+newstate) #Publish the email info ("fine means take ticket")
+                    client.publish("parkingNode/email", email+":fine"+":"+newstate) #Publish the email info ("fine means take ticket")
                 elif (not occupy) and (moneyLeft !=0):
                     newstate = "Empty"
-                    client.publish("xchen335/email", email+":null"+":"+newstate) #Publish the email info ("null means remove the email")
+                    client.publish("parkingNode/email", email+":null"+":"+newstate) #Publish the email info ("null means remove the email")
                 else :
                     newstate = "Idle"
         
@@ -162,7 +179,7 @@ if __name__ == '__main__':
                 newstate = "Loading"
             elif ((not occupy) and (moneyLeft !=0)):
                 newstate = "Empty"
-                client.publish("xchen335/email", email+":null"+":"+newstate) #Publish the email info ("null means remove the email")                
+                client.publish("parkingNode/email", email+":null"+":"+newstate) #Publish the email info ("null means remove the email")                
             elif ((not occupy) and (moneyLeft ==0)): 
                 newstate = "Idle"
         
