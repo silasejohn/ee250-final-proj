@@ -1,6 +1,7 @@
 """EE 250L Final Project Code
 Run rpi_pub_and_sub-maxcProj.py on Raspberry Pi."""
 
+from platform import node
 import paho.mqtt.client as mqtt
 import time
 from datetime import datetime
@@ -32,9 +33,9 @@ from grove_rgb_lcd import *
 # Global Vars #
 ###############
 totalMoneyInserted = 0
-moneyLeft = False
+moneyExists = False
 carExists = False
-nodeState = 0
+nodeState = "IDLE"
 activationState = False
 nodeName = "parkingNode"
 node_serialID = None # inits to a number
@@ -52,7 +53,7 @@ serialIDACK = "masterNode/serialIDACK"
 
 def on_connect(client, userdata, flags, rc):
     # subscribe to the serialID generation topic here
-    client.subscribe(serialIDGen) 
+    client.subscribe(serialIDGen)
     print("Subscribed to master serial ID generation")
     client.message_callback_add(serialIDGen, on_generation)
 
@@ -76,6 +77,18 @@ def on_generation(client, userdata, message):
         nodeName += node_serialID
         print("Name of this node main topic is: " + nodeName)
         isIDSetup = True
+
+"""
+def inputMoney():
+    # Button Logic #
+    global totalMoneyInserted
+    if (grovepi.digitalRead(buttonA) == 1):
+        totalMoneyInserted += 25 
+        setText("\nInput Money: " + str(totalMoneyInserted))
+        pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
+        client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
+        print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
+"""
 
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
@@ -117,19 +130,13 @@ if __name__ == '__main__':
     digitalWrite(ledG,0)	
     time.sleep(1)    
     setRGB(50,128,128) # set to light blue
-    setText("System is Ready")
+    setText("System is Ready\n" + nodeName)
     time.sleep(1)
 
     time_counter = 0
     while True:
-        # Button Logic #
-        if (grovepi.digitalRead(buttonA) == 1):
-            totalMoneyInserted += 25 
-            setText(nodeName + "\nInputted Money: " + str(totalMoneyInserted))
-            pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
-            client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
-            print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
-        
+        # calculate car exists and money exists # 
+
         # Rangefinder Logic #
         objDist = grovepi.ultrasonicRead(ultras)
         oldCarExists = carExists
@@ -142,6 +149,40 @@ if __name__ == '__main__':
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
             print("Published Topic: " + pubtopic_carExists + " with message " + str(carExists))
         
+        # Button Logic #
+        if (grovepi.digitalRead(buttonA) == 1):
+            totalMoneyInserted += 25 
+            setText("\nInput Money: " + str(totalMoneyInserted))
+            pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
+            client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
+            print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
+        
+        if totalMoneyInserted > 0:
+            moneyExists = True  
+        else:
+            moneyExists = False
+
+        # state calculation logic #
+        prevState = nodeState
+        if ((prevState is "IDLE") and carExists):
+            nodeState = "LOADING"
+        elif ((prevState is "IDLE") and moneyExists):
+            nodeState = "EMPTY"
+        elif ((prevState is "LOADING") and moneyExists):
+            nodeState = "SAFE"
+        elif ((prevState is "LOADING") and not carExists):
+            nodeState = "IDLE"
+        elif ((prevState is "SAFE") and not carExists):
+            nodeState = "EMPTY"
+        elif ((prevState is "SAFE") and not moneyExists):
+            nodeState = "LOADING"
+        elif ((prevState is "EMPTY") and not moneyExists):
+            nodeState = "IDLE"
+        else: 
+            nodeState = prevState
+
+        print("Current State: " + nodeState)
+
         time.sleep(.01)
         time_counter += 1
         if (time_counter >= 10):
