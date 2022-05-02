@@ -62,7 +62,6 @@ def pay_online(client, userdata, message):
     # Print on Terminal #
     addedMoney = str(message.payload, "utf-8")
     print(subTopicTwo + " Command Received (added money): " + addedMoney)
-    #setText("Received int:  %d cent"%(moneyCredit))
 
 if __name__ == '__main__':
     buttonA = 2 # Port of the button A installed.
@@ -74,6 +73,7 @@ if __name__ == '__main__':
 
     occupy = False
     moneyLeft = 0 # unit: cent
+    totalMoneyInserted = 0
     rate = 5.0 # 5 cent /min for parking rate
     timeExpir = 0
     timePre = datetime.now()
@@ -110,6 +110,13 @@ if __name__ == '__main__':
     time.sleep(1)
 	
     while True:
+        # Button Logic #
+        if (grovepi.digitalRead(buttonA) == 1):
+            totalMoneyInserted+=25 
+            print("Total Money Inserted: " + totalMoneyInserted)
+            client.publish("parkingNode/credit", totalMoneyInserted) 
+            totalMoneyInserted = 0
+
         """
         objDist = grovepi.ultrasonicRead(ultras)
         if (objDist > 1) and (objDist <100) :
