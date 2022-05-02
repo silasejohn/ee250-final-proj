@@ -89,13 +89,21 @@ if __name__ == '__main__':
     client.connect(host="eclipse.usc.edu", port=1883, keepalive=60) # port=1883
     client.loop_start()
 
-    setRGB(50,128,128)
-    setText("EE250 FinalProj\nJoseph Silas Max")
+    # LCD Initialization Text "
+    setRGB(50,128,128) # set to light blue
+    setText("EE 250 Final Project")
+    time.sleep(1)
+    setText("Group Members: \nJoseph Silas Max")
+    time.sleep(1)
+    setText("Initializing\n LED ON")
     digitalWrite(ledR,1)		# self checking
-    digitalWrite(ledG,1)		
-    time.sleep(3)
+    digitalWrite(ledG,1)
+    time.sleep(2)		
+    setText("Initializing\n LED OFF")
     digitalWrite(ledR,0)		# self checking
-    digitalWrite(ledG,0)		
+    digitalWrite(ledG,0)	
+    time.sleep(1)
+	
 
     """
     while True:
