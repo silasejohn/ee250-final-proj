@@ -15,7 +15,7 @@ serialID_gen = "masterNode/serialID"
 
 # subscribed topics
 serialIDACK = "masterNode/serialIDACK"
-operationalNode = "masterNode/operationalNode"
+topic_operationalNode = "masterNode/operationalNode"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -23,7 +23,27 @@ def on_connect(client, userdata, flags, rc):
     time.sleep(.1)
 
     client.subscribe(serialIDACK)
+    print("Subscribed to Topic: " + serialIDACK)
     client.message_callback_add(serialIDACK, on_generation_ACK)
+
+    client.subscribe("testNode0/operationalNode")
+    print("Subscriped to Topic: " + "testNode0/operationalNode")
+    client.message_callback_add("testNode0/operationalNode", on_operational_node)
+
+    """
+
+    counter = 0
+    # initialize topics for 10 nodes (can be changed to accomodate more parking spots)
+    while (counter < 10):
+        topic_operationalNode = "testnode" + str(counter) + "/operationalNode"
+        client.subscribe(topic_operationalNode)
+        print("Subscriped to Topic: " + topic_operationalNode)
+        client.message_callback_add(topic_operationalNode, on_operational_node)
+        counter += 1
+
+    counter = 0
+    """
+
 
     """
     #subscribe to the ultrasonic ranger topic here
@@ -57,12 +77,6 @@ def on_generation_ACK(client, userdata, message):
     print("Current Serial ID: " + str(serialID))
     ack_message = str(message.payload, "utf-8")
     print("INITIALIZED NEW NODE: " + ack_message)
-    
-    # subscripe to all the new topics here
-    topic_operationalNode = "testnode" + str(serialID) + "/operationalNode"
-    client.subscribe(topic_operationalNode)
-    client.message_callback_add(topic_operationalNode, on_operational_node)
-    print("subscribed to " + topic_operationalNode)
 
     # increment serial ID
     serialID += 1
@@ -70,6 +84,7 @@ def on_generation_ACK(client, userdata, message):
     isSerialIDChanged = True
 
 def on_operational_node(client, userdata, message):
+    print("In callback function")
     operational_message = str(message.payload, "utf-8")
     print(operational_message)
 
@@ -97,7 +112,7 @@ if __name__ == '__main__':
     while True:
         client.publish(serialID_gen, str(serialID))
         if(isSerialIDChanged):
-            print ("Published SerialID: " + str(serialID))
+            print("Published to Topic: " + serialID_gen + " with message of " + str(serialID))
             isSerialIDChanged = False
             time.sleep(1)
-        time.sleep(.1)
+        time.sleep(1)
