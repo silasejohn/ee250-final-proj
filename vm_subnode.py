@@ -9,6 +9,7 @@ import time
 #################
 serialID = 0
 isSerialIDChanged = True
+numQuarters = [0] * 10 # initilize the number of quarters per machine as 0
 
 # published topics
 serialID_gen = "masterNode/serialID"
@@ -26,23 +27,22 @@ def on_connect(client, userdata, flags, rc):
     print("Subscribed to Topic: " + serialIDACK)
     client.message_callback_add(serialIDACK, on_generation_ACK)
 
-    client.subscribe("testNode0/operationalNode")
-    print("Subscriped to Topic: " + "testNode0/operationalNode")
-    client.message_callback_add("testNode0/operationalNode", on_operational_node)
-
-    """
-
+    #######################
+    ## INIT FOR 10 NODES ##
+    #######################
     counter = 0
-    # initialize topics for 10 nodes (can be changed to accomodate more parking spots)
     while (counter < 10):
-        topic_operationalNode = "testnode" + str(counter) + "/operationalNode"
+        # topic that reports the status of an node (parking spot)
+        topic_operationalNode = "testNode" + str(counter) + "/operationalNode"
+        topic_nodeMoneyInserted = "testNode" + str(counter) + "/nodeMoneyInserted"
         client.subscribe(topic_operationalNode)
+        client.subscribe(topic_nodeMoneyInserted)
         print("Subscriped to Topic: " + topic_operationalNode)
+        print("Subscriped to Topic: " + topic_nodeMoneyInserted)
         client.message_callback_add(topic_operationalNode, on_operational_node)
-        counter += 1
+        client.message_callback_add(topic_nodeMoneyInserted, on_money_insert)
 
-    counter = 0
-    """
+        counter += 1
 
 
     """
@@ -60,7 +60,7 @@ def on_connect(client, userdata, flags, rc):
     """
 
 
-# Default message callback. Please use custom callbacks.
+# Default message callback (if we recieve messages for something we don't know how to deal with)
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
@@ -68,12 +68,13 @@ def on_Ranger(client, userdata, message):
     # Action for Ranger message is printing out the value.
     print("RangeFinder Value: " + str(message.payload, "utf-8") + " cm")
 
+
+# action for recieving confirmation that serial ID is assigned
 def on_generation_ACK(client, userdata, message):
-    # action for recieving confirmation that serial ID is assigned
     global serialID
     global isSerialIDChanged
     
-    # code to check the ACK serialID, and increment it by one
+    # check the ACK serialID and print to terminal
     print("Current Serial ID: " + str(serialID))
     ack_message = str(message.payload, "utf-8")
     print("INITIALIZED NEW NODE: " + ack_message)
@@ -83,10 +84,18 @@ def on_generation_ACK(client, userdata, message):
     print("\nNew Serial ID Value: " + str(serialID))
     isSerialIDChanged = True
 
+# actions for display when checking availablity of a parking lot
 def on_operational_node(client, userdata, message):
-    print("In callback function")
     operational_message = str(message.payload, "utf-8")
-    print(operational_message)
+    # print(operational_message)
+
+# actions for when a quarter is inserted into a node parking meter
+def on_money_insert(client, userdata, message):
+    global numQuarters
+    message = str(message.payload, "utf-8")
+    numQuarters[int(message)] += 1
+    for i in numQuarters:
+        print("Element is " + str(i))
 
 """
 def on_Button(client, userdata, message):  
@@ -110,9 +119,12 @@ if __name__ == '__main__':
     client.loop_start()
 
     while True:
-        client.publish(serialID_gen, str(serialID))
+        # will continously be publishing serialID on the loop
+        client.publish(serialID_gen, str(serialID)) 
+
         if(isSerialIDChanged):
             print("Published to Topic: " + serialID_gen + " with message of " + str(serialID))
-            isSerialIDChanged = False
+            isSerialIDChanged = False # becomes true when recieve a ACK message from the initialized new node
             time.sleep(1)
-        time.sleep(1)
+        
+        time.sleep(1) # gives some break in the loop
