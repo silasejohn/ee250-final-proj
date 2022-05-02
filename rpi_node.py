@@ -157,7 +157,7 @@ if __name__ == '__main__':
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
             print("Published Topic: " + pubtopic_carExists + " with message " + str(carExists))
         
-        time.sleep(1)
+        time.sleep(.01)
         time_counter += 1
         if (time_counter >= 10):
             time_counter = 0
