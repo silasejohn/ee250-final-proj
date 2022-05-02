@@ -23,9 +23,9 @@ def on_press(key):
     if k == 'm':
         print("Add money publised")
         # send 10 cent to rpi
-        client.publish("xchen335/lcd", "m")
+        client.publish("parkingNode/lcd", "m")
         # send "LED_OFF"
-        client.publish("xchen335/credit", "10")
+        client.publish("parkingNode/credit", "10")
 
 
 if __name__ == '__main__':
