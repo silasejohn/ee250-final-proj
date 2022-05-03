@@ -176,13 +176,13 @@ if __name__ == '__main__':
         prevState = nodeState
         if ((prevState is "IDLE") and carExists):
             nodeState = "LOADING"
-        elif ((prevState is "IDLE") and moneyExists):
+        elif ((prevState is "IDLE") and moneyExists and not carExists):
             nodeState = "EMPTY"
         elif ((prevState is "LOADING") and moneyExists):
             nodeState = "SAFE"
         elif ((prevState is "LOADING") and not carExists):
             nodeState = "IDLE"
-        elif ((prevState is "SAFE") and not carExists):
+        elif ((prevState is "SAFE") and not carExists and moneyExists):
             nodeState = "EMPTY"
         elif ((prevState is "SAFE") and not moneyExists):
             nodeState = "LOADING"
