@@ -213,9 +213,8 @@ if __name__ == '__main__':
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
             timeLeft = int(timeAllotted) - int(timeDiff)
-            displayText = "Time Left: \n" + str(timeLeft)
+            displayText = "Time Left:     \n" + str(timeLeft)
             setText_norefresh(displayText)
-            # display time left
         elif (nodeState is "EMPTY"):
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
