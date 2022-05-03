@@ -135,7 +135,10 @@ if __name__ == '__main__':
     digitalWrite(ledG,0)	
     time.sleep(1)    
     setRGB(50,128,128) # set to light blue
-    setText("System is Ready\n" + nodeName)
+    displayText = "System is Ready\n" + nodeName
+    previousText = displayText
+    setText(displayText)
+    displayText = "Welcome! \nOpen Spot"
     time.sleep(1)
 
     time_counter = 0
@@ -159,7 +162,7 @@ if __name__ == '__main__':
             if (totalMoneyInserted is 0):
                 timePre = datetime.now()
             totalMoneyInserted += 25 
-            setText("\nInput Money: " + str(totalMoneyInserted))
+            # setText("\nInput Money: " + str(totalMoneyInserted))
             pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
             client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
             print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
@@ -194,12 +197,12 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,0)
             setRGB(50,128,128)
-            setText("Welcome! \nOpen Spot")
+            displayText = "Welcome! \nOpen Spot"
         elif (nodeState is "LOADING"):
             digitalWrite(ledR,1)
             digitalWrite(ledG,0)
             setRGB(128, 0, 0)
-            setText("Enter Money!!!")
+            displayText = "Enter Money!!!"
         elif (nodeState is "SAFE"):
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
@@ -209,17 +212,22 @@ if __name__ == '__main__':
             if (timeDiff > timeAllotted):  
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
-            timeLeft = timeAllotted - timeDiff
-            setText("Time Left: " + str(timeLeft))
+            timeLeft = int(timeAllotted) - int(timeDiff)
+            displayText = "Time Left: \n" + str(timeLeft)
             # display time left
         elif (nodeState is "EMPTY"):
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(128, 128, 0)
-            setText("Clearing Extra\nMoney . . .")
+            displayText = "Clearing Extra\nMoney . . ."
+            setText(displayText)
             time.sleep(3)
             totalMoneyInserted = 0
+        
+        if (previousText is not displayText):
+            setText(displayText)
 
+        previousText = displayText
 
         time.sleep(.01)
         time_counter += 1
