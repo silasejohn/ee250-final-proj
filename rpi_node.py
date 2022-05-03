@@ -204,8 +204,8 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(0, 128, 0)
-            timeAllotted = totalMoneyInserted * 10
-            timeDiff = (datetime.now()-timePre).total_seconds()
+            timeAllotted = totalMoneyInserted * .4
+            timeDiff = (datetime.now()-timePre).total_seconds() 
             if (timeDiff > timeAllotted):  
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
