@@ -40,6 +40,8 @@ activationState = False
 nodeName = "parkingNode"
 node_serialID = None # inits to a number
 isIDSetup = False # turns true once node serialID is given an integer
+sampleCarGoneTime = True
+
 
 # subscriped topics 
 serialIDGen = "masterNode/serialID"
@@ -150,8 +152,16 @@ if __name__ == '__main__':
         oldCarExists = carExists
         if (objDist > 1) and (objDist < 100):
             carExists = True
+            carGoneTime = datetime.now()
         else:
-            carExists = False
+            if (sampleCarGoneTime):
+                carGoneTime = datetime.now()
+                sampleCarGoneTime = False
+            if ((datetime.now() - carGoneTime).total_seconds()):
+                carExists = False
+                sampleCarGoneTime = True
+            else:
+                pass
         if (oldCarExists is not carExists):
             pubtopic_carExists = "parkingNode" + node_serialID + "/carExists"
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
