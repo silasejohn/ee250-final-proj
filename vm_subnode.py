@@ -137,7 +137,7 @@ def on_money_insert(client, userdata, message):
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     nodeMoneyInserted[int(message_split[0])] = int(message_split[1])
-    print("money available is " + str(message_split[1]) + " for node " + message_split[0])
+    print(" Node " + message_split[0] + "total money available: " + str(message_split[1]))
 
 # actions that occur when the state of car existance changes for a parking spot 
 def on_car_existance(client, userdata, message):
@@ -145,7 +145,7 @@ def on_car_existance(client, userdata, message):
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     carExistance[int(message_split[0])] = message_split[1]
-    print("car exists " + str(message_split[1]) + " for node " + message_split[0])
+    print(" Node " + message_split[0] + "car status: " + str(message_split[1]))
 
 """
 def on_Email(client, userdata, message):     
