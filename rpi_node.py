@@ -185,7 +185,8 @@ if __name__ == '__main__':
         else: 
             nodeState = prevState
 
-        print("Current State: " + nodeState)
+        if nodeState is not prevState:
+            print("Current State: " + nodeState)
 
         ## PERFORMS CERTAIN ACTIONS BASED ON STATE ##
         if (nodeState is "IDLE"):
