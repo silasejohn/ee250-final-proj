@@ -217,11 +217,11 @@ if __name__ == '__main__':
             setRGB(128, 128, 0)
             displayText = "Clearing Extra\nMoney . . ."
             setText(displayText)
-            time.sleep(3)
+            totalMoneyInserted = 0
             pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
             client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
             print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
-            totalMoneyInserted = 0
+            time.sleep(3)
         
         ## DISPLAYS OUTPUT ON LCD ##
         if ((previousText is not displayText) and (nodeState is not "SAFE")):
