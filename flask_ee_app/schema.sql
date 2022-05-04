@@ -6,3 +6,10 @@ CREATE TABLE parkingNodes (
     title TEXT NOT NULL,
     content TEXT NOT NULL
 );
+
+CREATE TABLE parkingNodes (
+    serialID INTEGER NOT NULL
+    email TEXT NOT NULL
+    nodeState TEXT NOT NULL
+    
+)
