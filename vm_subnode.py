@@ -9,7 +9,8 @@
 import paho.mqtt.client as mqtt
 import time
 import sqlite3
-
+import smtplib, ssl
+from email.message import EmailMessage
 """
 CREATE TABLE sharks(id integer NOT NULL, 
                     name text NOT NULL, 
@@ -73,6 +74,7 @@ node_count = 10 # the number of nodes / parking spots that can be in the network
 isSerialIDChanged = True
 nodeMoneyInserted = [0] * node_count # initialize the number of quarters per machine as 0
 carExistance = [0] * node_count # initialize the existances to false (or 0)
+emailList = [0] * node_count
 
 # published topics
 serialID_gen = "masterNode/serialID"
@@ -96,12 +98,16 @@ def on_connect(client, userdata, flags, rc):
     while (counter < node_count):
         topic_nodeMoneyInserted = "parkingNode" + str(counter) + "/nodeMoneyInserted" # topic that receives current moneyInserted in a node
         subtopic_carExists = "parkingNode" + str(counter) + "/carExists" # topic that receives information on whether a car is parked
+        subtopic_sendEmail = "parkingNode" + str(counter) + "/sendEmail" # topic that receives information on when to send email
         client.subscribe(topic_nodeMoneyInserted)
         client.subscribe(subtopic_carExists)
+        client.subscribe(subtopic_sendEmail)
         print("Subscriped to Topic: " + topic_nodeMoneyInserted)
         print("Subscribed to Topic: " + subtopic_carExists)
+        print("Subscribed to Topic: " + subtopic_sendEmail)
         client.message_callback_add(topic_nodeMoneyInserted, on_money_insert)
         client.message_callback_add(subtopic_carExists, on_car_existance)
+        client.message_callback_add(subtopic_sendEmail, on_email)
 
         counter += 1
 
@@ -137,6 +143,8 @@ def on_money_insert(client, userdata, message):
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     nodeMoneyInserted[int(message_split[0])] = int(message_split[1])
+    if (message_split[1]):
+        print("{Node " + message_split[0] + "} - ALL MONEY IS CLEARED (no car)")
     print("{Node " + message_split[0] + "} - total money available: " + str(message_split[1]))
 
 # actions that occur when the state of car existance changes for a parking spot 
@@ -147,11 +155,60 @@ def on_car_existance(client, userdata, message):
     carExistance[int(message_split[0])] = message_split[1]
     print("{Node " + message_split[0] + "} - car status: " + str(message_split[1]))
 
-"""
-def on_Email(client, userdata, message):     
+
+def on_email(client, userdata, message):     
     # Action for email message is printing out the string.
-    print("Received email info:" + str(message.payload, "utf-8") ) #Maxc
-"""
+    global emailList
+    message = str(message.payload, "utf-8")
+    message_split = message.split(":")
+    #if (bool(message_split[1])):
+    #    send_email(str(emailList[int(message_split[0])]))
+    print("\n\nReceived email Info: send email signal is " + str(message.payload, "utf-8") + "\n") 
+    send_email('sejohn@usc.edu')
+
+def send_email(to_email):
+# Try to log in to server and send email
+    smtp_server = "smtp.gmail.com"
+    port = 587  # For starttls
+    sender_email = "park.notification123@gmail.com"
+    password = "ee250!@#"
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+    
+    print(to_email)
+    try:
+        server = smtplib.SMTP(smtp_server,port)
+        server.ehlo() # Can be omitted
+        server.starttls(context=context) # Secure the connection
+        server.ehlo() # Can be omitted
+        server.login(sender_email, password)
+        # TODO: Send email here
+        sender_email = "park.notification123@gmail.com"
+        receiver_email = to_email
+        print("this is the email its sending to: " + to_email)
+        print("sending email nowww")
+
+        msg = EmailMessage()
+        msg.set_content('Hello,                                \n' + 
+        'This is a friendly reminder that your time is almost up \n' +
+        'Please move your car before you run out of time or add more money to keep the car in the place.\n'+
+        '\n'
+        '\n'
+        'Very Respectfully, \n'
+        'USC EE250 Parking team \n')
+        msg['Subject'] = 'Friendly Reminder: Time is almost out'
+        msg['From'] = "USC EE250 Parking Enforcement"
+        msg['To'] = to_email
+                
+
+    # Send email here
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+
+    except Exception as e:
+    # Print any error messages to stdout
+        print(e)
+    finally:
+        server.quit()
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
