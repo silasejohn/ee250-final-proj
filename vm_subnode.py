@@ -82,7 +82,8 @@ local_webpage = """
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title> Document </title>
+        <title> Parking Lot Management System </title>
+        < META HTTP-EQUIV="refresh" CONTENT="6" >
     </head>
     <body>
         <h1>Parking Lot Management System</h1>
