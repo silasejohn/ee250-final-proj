@@ -31,6 +31,7 @@ from grove_rgb_lcd import *
 totalMoneyInserted = 0
 moneyExists = False
 carExists = False
+isEmailSent = False
 nodeState = "IDLE"
 activationState = False
 nodeName = "parkingNode"
@@ -209,10 +210,11 @@ if __name__ == '__main__':
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
             timeLeft = int(timeAllotted) - int(timeDiff)
-            if (timeLeft >= 10):
+            if ((timeLeft <= 10) and (isEmailSent is False)):
                 pubtopic_sendEmail = nodeName + "/sendEmail"
                 client.publish(pubtopic_sendEmail, node_serialID + ":" + str(True))
                 print("Published Topic: " + pubtopic_sendEmail + " with a message of " + str(True))
+                isEmailSent = True
             displayText = "Time Left:     \n" + str(timeLeft)
             setText_norefresh(displayText)
         elif (nodeState is "EMPTY"):
@@ -222,6 +224,7 @@ if __name__ == '__main__':
             displayText = "Clearing Extra\nMoney . . ."
             setText(displayText)
             totalMoneyInserted = 0
+            isEmailSent = False
             pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
             client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
             print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
