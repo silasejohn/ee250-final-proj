@@ -6,11 +6,6 @@
 
 """ RUN THIS FILE ON RASPBERRY PI """
 
-from platform import node
-import paho.mqtt.client as mqtt
-import time
-from datetime import datetime
-
 ###############
 ### IMPORTS ### 
 ###############
@@ -24,6 +19,10 @@ sys.path.append('../../Software/Python/grove_rgb_lcd')
 import grovepi
 from grovepi import *
 from grove_rgb_lcd import *
+from platform import node
+import paho.mqtt.client as mqtt
+import time
+from datetime import datetime
 
 ###############
 # Global Vars #
@@ -70,7 +69,6 @@ def on_message(client, userdata, msg):
 def on_generation(client, userdata, message):
     global isIDSetup
     global nodeName
-    global canRedefine
     if (not isIDSetup):
         global node_serialID 
         node_serialID = str(message.payload, "utf-8")
@@ -138,6 +136,7 @@ if __name__ == '__main__':
         ## DETERMINING EXISTANCE OF CAR ##
         objDist = grovepi.ultrasonicRead(ultras)
         list_insert_counter += 1
+        # some logic for the partial moving average filter (data processing)
         if (list_insert_counter >= movingAvgFilterLength):
             list_insert_counter = 0
         if (objDist > 1) and (objDist < 100): 
@@ -151,6 +150,7 @@ if __name__ == '__main__':
         else: 
             oldCarExists = carExists
             carExists = False
+        # only publish the state if there is a state change in the value of the signal
         if (oldCarExists is not carExists):
             pubtopic_carExists = nodeName + "/carExists"
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
@@ -190,6 +190,7 @@ if __name__ == '__main__':
         else: 
             nodeState = prevState
 
+        # only update the state being sent if there is a change
         if nodeState is not prevState:
             pubtopic_nodeState = nodeName + "/nodeState"
             client.publish(pubtopic_nodeState, node_serialID + ":" + str(nodeState))
@@ -211,6 +212,7 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(0, 128, 0)
+            # logic to calculate the time raining given a certain amount of inserted money
             timeAllotted = totalMoneyInserted * .6
             timeDiff = (datetime.now()-timePre).total_seconds() 
             if (timeDiff > timeAllotted):  
@@ -220,6 +222,7 @@ if __name__ == '__main__':
                 client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
                 print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
             timeLeft = int(timeAllotted) - int(timeDiff)
+            # logic for the timing of when to send the email (the signal to send the email from other node)
             if ((timeLeft <= 10) and (isEmailSent is False)):
                 pubtopic_sendEmail = nodeName + "/sendEmail"
                 client.publish(pubtopic_sendEmail, node_serialID + ":" + str(True))
@@ -231,6 +234,7 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(128, 128, 0)
+            # clears all money left is there is no car in spot
             displayText = "Clearing Extra\nMoney . . ."
             setText(displayText)
             totalMoneyInserted = 0
@@ -240,7 +244,7 @@ if __name__ == '__main__':
             print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
             time.sleep(3)
         
-        ## DISPLAYS OUTPUT ON LCD ##
+        ## DISPLAYS OUTPUT ON LCD (prev lines set the variable displayText to avoid flickering if text is same) ##
         if ((previousText is not displayText) and (nodeState is not "SAFE")):
             setText(displayText)
 

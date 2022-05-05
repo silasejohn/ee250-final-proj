@@ -8,7 +8,6 @@
 
 import paho.mqtt.client as mqtt
 import time
-import sqlite3
 import smtplib, ssl
 from email.message import EmailMessage
 import webbrowser
@@ -26,7 +25,6 @@ carExistance = ["False"] * node_count # initialize the existances to false (or 0
 string_carExistance = ["Spot is Open"] * node_count # used for browser feed
 emailList = [0] * node_count
 default_email = 'sejohn@usc.edu'
-global_counter = 0
 local_webpage = ""
 
 # published topics
@@ -34,6 +32,10 @@ serialID_gen = "masterNode/serialID"
 
 # subscribed topics
 serialIDACK = "masterNode/serialIDACK"
+
+###############
+## FUNCTIONS ##
+###############
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code " + str(rc))
@@ -165,12 +167,14 @@ def send_email(to_email):
     finally:
         server.quit()
 
+# function to rewrite the page and html generated
 def rewritePage():
     global local_webpage
     global carExistance
     global string_carExistance
     global nodeMoneyInserted
 
+    # some calculations for things displayed on the webpage
     total_current_node_money = sum(nodeMoneyInserted)
     
     num_illegal_cars = 0
@@ -184,6 +188,7 @@ def rewritePage():
         else: 
             string_carExistance[element] = "Spot is Open"
 
+    # actual webpage html template code
     local_webpage = """
     <!DOCTYPE html>
     <html lang="en">
@@ -215,13 +220,13 @@ def rewritePage():
     </html>
 """
 
+# a function that helps display the html template on the browser (locally)
 def browserDisplay():
     global local_webpage
     rewritePage()
     newLocalWebpage = open("displayData.html", "w")
     newLocalWebpage.write(local_webpage)
     newLocalWebpage.close()
-    # webbrowser.open_new_tab("displayData.html")
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -230,14 +235,13 @@ if __name__ == '__main__':
     client.on_connect = on_connect
     client.connect(host="eclipse.usc.edu", port=1883, keepalive=60)
     client.loop_start()
-    time_counter = 0
     browserDisplay()
     webbrowser.open_new_tab("displayData.html")
 
     while True:
         # will continously be publishing newest serialID on the loop (newest node will pick it up)
         client.publish(serialID_gen, str(serialID)) 
-
+        # if a serialID is assigned
         if(isSerialIDChanged):
             print("Published to Topic: " + serialID_gen + " with message of " + str(serialID))
             print("Scanning for next node ... ")
@@ -245,9 +249,4 @@ if __name__ == '__main__':
             time.sleep(.1)
         
         time.sleep(.1) # gives some break in the loop
-        time_counter += 1
-        browserDisplay()
-        if (time_counter > 100):
-            time_counter = 0
-            global_counter += 1
-            # browserDisplay()
+        browserDisplay() # display / update the browser visualization
