@@ -1,5 +1,3 @@
-
-
 # EE250 FINAL PROJECT
 <b>Online Parking lot Management System</b>
 <br><b>USC 2022 Spring</b>
