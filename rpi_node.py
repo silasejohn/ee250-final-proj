@@ -29,6 +29,7 @@ from grove_rgb_lcd import *
 # Global Vars #
 ###############
 totalMoneyInserted = 0
+movingAvgFilterLength = 7
 moneyExists = False
 carExists = False
 isEmailSent = False
@@ -38,6 +39,7 @@ nodeName = "parkingNode"
 node_serialID = None # inits to a number
 isIDSetup = False # turns true once node serialID is given an integer
 sampleCarGoneTime = True
+pastCarExistancepoints = [0] * movingAvgFilterLength
 
 
 # subscribed topics 
@@ -129,24 +131,36 @@ if __name__ == '__main__':
     setText(displayText)
     displayText = "Welcome! \nOpen Spot"
     time.sleep(1)
+    list_insert_counter = -1
 
     while True:
         ## Rangefinder Logic ##
         ## DETERMINING EXISTANCE OF CAR ##
         objDist = grovepi.ultrasonicRead(ultras)
-        oldCarExists = carExists
+        list_insert_counter += 1
+        if list_insert_counter >= movingAvgFilterLength):
+            list_insert_counter = 0
         if (objDist > 1) and (objDist < 100):
-            carExists = True
-            carGoneTime = datetime.now()
+            pastCarExistancepoints[list_insert_counter] = 1
+            # carExists = True
+            # carGoneTime = datetime.now()
         else:
-            if (sampleCarGoneTime):
-                carGoneTime = datetime.now()
-                sampleCarGoneTime = False
-            if ((datetime.now() - carGoneTime).total_seconds()):
-                carExists = False
-                sampleCarGoneTime = True
-            else:
-                pass
+            pastCarExistancepoints[list_insert_counter] = 0
+            # if (sampleCarGoneTime): # a flag symbolizing if the car is first sensed to disappear
+            #     carGoneTime = datetime.now() # sets a time counter from when the car if first sensed to disappear
+            #     sampleCarGoneTime = False 
+            # if ((datetime.now() - carGoneTime).total_seconds()):
+            #     carExists = False
+            #     sampleCarGoneTime = True
+            # else:
+            #     pass
+        total = sum(list_insert_counter)
+        if (total >= 7):
+            oldCarExists = carExists
+            carExists = True
+        else: 
+            oldCarExists = carExists
+            carExists = False
         if (oldCarExists is not carExists):
             pubtopic_carExists = nodeName + "/carExists"
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
