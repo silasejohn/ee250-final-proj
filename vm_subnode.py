@@ -76,41 +76,10 @@ node_count = 10 # the number of nodes / parking spots that can be in the network
 isSerialIDChanged = True
 nodeMoneyInserted = [0] * node_count # initialize the number of quarters per machine as 0
 carExistance = [0] * node_count # initialize the existances to false (or 0)
+string_carExistance = [0] * node_count # used for browser feed
 emailList = [0] * node_count
 global_counter = 0
-local_webpage = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title> Parking Lot Management System </title>
-        < META HTTP-EQUIV="refresh" CONTENT="6" >
-    </head>
-    <body>
-        <h1>Parking Lot Management System</h1>
-        <p>an MQTT-based system capable of monitoring parking lot space availability</p>
-        <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</p>
-        <p>NODE AVAILABILITY (whether a car is currently parked here or not):</p>
-        <ul>
-            <li>{EXAMPLE NODE} ~&gt; AVAILABILITY : Paid XX&nbsp;</li>
-            <li>{NODE ONE} ~&gt;</li>
-            <li>{NODE TWO} ~&gt;</li>
-            <li>{NODE THREE}&nbsp;~&gt;</li>
-            <li>{NODE FOUR}&nbsp;~&gt;</li>
-            <li>{NODE FIVE}&nbsp;~&gt;</li>
-            <li>{NODE SIX}&nbsp;~&gt;</li>
-            <li>{NODE SEVEN}&nbsp;~&gt;</li>
-            <li>{NODE EIGHT}&nbsp;~&gt;</li>
-            <li>{NODE NINE}&nbsp;~&gt;</li>
-            <li>{NODE TEN}&nbsp;~&gt; """ + global_counter + """</li>
-        </ul>
-        <p>Total Money Inserted into Parking Meters Currently:&nbsp;</p>
-        <p>Number of Current Illegal Parking Cars:</p>
-        <p>Here is some&nbsp;<strong>sample bold text</strong>.&nbsp;</p>
-        <blockquote>Here is a blockquote... add some more text!</blockquote>
-    </body>
-    </html?
-"""
+local_webpage = ""
 
 # published topics
 serialID_gen = "masterNode/serialID"
@@ -246,8 +215,54 @@ def send_email(to_email):
     finally:
         server.quit()
 
+def rewritePage():
+    global local_webpage
+    global carExistance
+    global string_carExistance
+
+    for element in range(len(carExistance)):
+        if carExistance[element] is str(True):
+            string_carExistance[element] = "Spot Open"
+        else: 
+            string_carExistance[element] = "UNAVAILABLE"
+
+    local_webpage = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title> Parking Lot Management System </title>
+        <meta http-equiv="refresh" content="6">
+    </head>
+    <body>
+        <h1>Parking Lot Management System</h1>
+        <p>an MQTT-based system capable of monitoring parking lot space availability</p>
+        <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</p>
+        <p>NODE AVAILABILITY (whether a car is currently parked here or not):</p>
+        <ul>
+            <li>{EXAMPLE NODE} ~&gt; AVAILABILITY : Paid XX&nbsp;</li>
+            <li>{NODE ZERO} ~&gt; """ + string_carExistance[0] + """</li>
+            <li>{NODE ONE} ~&gt; """ + string_carExistance[1] + """</li>
+            <li>{NODE TWO}&nbsp;~&gt; """ + string_carExistance[2] + """</li>
+            <li>{NODE THREE}&nbsp;~&gt; """ + string_carExistance[3] + """</li>
+            <li>{NODE FOUR}&nbsp;~&gt; """ + string_carExistance[4] + """</li>
+            <li>{NODE FIVE}&nbsp;~&gt; """ + string_carExistance[5] + """</li>
+            <li>{NODE SIX}&nbsp;~&gt; """ + string_carExistance[6] + """</li>
+            <li>{NODE SEVEN}&nbsp;~&gt; """ + string_carExistance[7] + """</li>
+            <li>{NODE EIGHT}&nbsp;~&gt; """ + string_carExistance[8] + """</li>
+            <li>{NODE NINE}&nbsp;~&gt; """ + string_carExistance[9] + """</li>
+        </ul>
+        <p>Total Money Inserted into Parking Meters Currently:&nbsp;</p>
+        <p>Number of Current Illegal Parking Cars:</p>
+        <p>Here is some&nbsp;<strong>sample bold text</strong>.&nbsp;</p>
+        <blockquote>Here is a blockquote... add some more text!</blockquote>
+    </body>
+    </html?
+"""
+
 def browserDisplay():
     global local_webpage
+    rewritePage()
     newLocalWebpage = open("displayData.html", "w")
     newLocalWebpage.write(local_webpage)
     newLocalWebpage.close()
