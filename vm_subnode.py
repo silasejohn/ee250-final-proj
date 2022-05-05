@@ -198,7 +198,6 @@ def rewritePage():
         <p>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</p>
         <p>NODE AVAILABILITY (whether a car is currently parked here or not):</p>
         <ul>
-            <li>{EXAMPLE NODE} ~&gt; AVAILABILITY : Paid XX&nbsp;</li>
             <li>{NODE ZERO} ~&gt; """ + string_carExistance[0] + """</li>
             <li>{NODE ONE} ~&gt; """ + string_carExistance[1] + """</li>
             <li>{NODE TWO}&nbsp;~&gt; """ + string_carExistance[2] + """</li>
@@ -213,7 +212,7 @@ def rewritePage():
         <p>Total Money Inserted into Parking Meters Currently:&nbsp; """ + str(total_current_node_money) + """</p>
         <p>Number of Current Illegal Parking Cars: """ + str(num_illegal_cars) + """</p>
     </body>
-    </html?
+    </html>
 """
 
 def browserDisplay():
