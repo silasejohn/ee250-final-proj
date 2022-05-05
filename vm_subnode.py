@@ -130,7 +130,7 @@ def on_node_recv(client, userdata, message):
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
     nodeStates[int(message_split[0])] = str(message_split[1])
-    print("\n\n{Node " + message_split[0] + "} - state is " + message[1] + "\n")
+    print("{Node " + message_split[0] + "} - state is " + message_split[1] + "\n")
 
 def send_email(to_email):
 # Try to log in to server and send email
@@ -252,6 +252,7 @@ if __name__ == '__main__':
 
         if(isSerialIDChanged):
             print("Published to Topic: " + serialID_gen + " with message of " + str(serialID))
+            print("Scanning for next node ... ")
             isSerialIDChanged = False # becomes true when recieve a ACK message from the initialized new node
             time.sleep(.1)
         
