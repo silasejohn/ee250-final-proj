@@ -140,7 +140,7 @@ if __name__ == '__main__':
         list_insert_counter += 1
         if (list_insert_counter >= movingAvgFilterLength):
             list_insert_counter = 0
-        if (objDist > 1) and (objDist < 100):
+        if (objDist < 100): # (objDist > 1) and (
             pastCarExistancepoints[list_insert_counter] = 1
             # carExists = True
             # carGoneTime = datetime.now()
