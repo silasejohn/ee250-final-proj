@@ -114,7 +114,7 @@ def on_email(client, userdata, message):
     message_split = message.split(":")
     emailList[int(message_split[0])] = str(message_split[1]) # which nodes should send email (by index)
     if (bool(message_split[1])): # if should send email
-        send_email(str(default_email])) # would normally replace with a method of inputting emails
+        send_email(str(default_email)) # would normally replace with a method of inputting emails
     print("\n\n{Node " + message_split[0] + "} - send email signal is " + message + "\n") 
 
 def on_node_recv(client, userdata, message):
