@@ -7,7 +7,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is our final project for USC EE250 class. We simulated a parking lot management system (parking meter), that will notifiy the subscribed users through email to avoid parking violations or a towing situation.
+This is our final project for USC EE250 class. We simulated a parking lot management system and added some other functionality and visualization. See this writeup for further information: https://drive.google.com/file/d/18WxfGYAZZJHv7pOjswmcGV6ydezgwwc9/view
 
 ## The group
 Max Chen, USC Electrical Engineering
