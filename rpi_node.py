@@ -154,7 +154,7 @@ if __name__ == '__main__':
             #     sampleCarGoneTime = True
             # else:
             #     pass
-        total = sum(list_insert_counter)
+        total = sum(pastCarExistancepoints)
         if (total >= 7):
             oldCarExists = carExists
             carExists = True
