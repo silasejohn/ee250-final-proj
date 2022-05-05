@@ -13,60 +13,6 @@ import smtplib, ssl
 from email.message import EmailMessage
 import webbrowser
 
-"""
-CREATE TABLE sharks(id integer NOT NULL, 
-                    name text NOT NULL, 
-                    sharktype text NOT NULL, 
-                    length integer NOT NULL);
-
-Column Names:
-id 
-name 
-sharktype
-length
-
-INSERT INTO sharks VALUES (1, "Sammy", "Greenland Shark", 427);
-
-VIEW TABLES
-SELECT * FROM sharks; // view whole table
-
-SELECT * FROM sharks WHERE id IS 1; // display column where id = 1
-
-ALTER TABLE sharks ADD COLUMN age integer; // add a column to the table 
-
-UPDATE sharks SET age = 272 WHERE id=1; // set the age value for id = 1, shark table
-
-DELETE FROM sharks WHERE age <= 200; // delete every row for this is true
-
-CREATE TABLE endangered (id integer NOT NULL, status text NOT NULL);
-INSERT INTO endangered VALUES (1,  "near threatened");
-
-
-?? CODE ??
-
-import sqlite3
-
-connection = sqlite3.connect('database.db')
-
-
-with open('schema.sql') as f:
-    connection.executescript(f.read())
-
-cur = connection.cursor()
-
-cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-            ('First Post', 'Content for the first post')
-            )
-
-cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-            ('Second Post', 'Content for the second post')
-            )
-
-connection.commit()
-connection.close()
-
-"""
-
 #################
 ## Global Vars ##
 #################
@@ -75,9 +21,11 @@ node_count = 10 # the number of nodes / parking spots that can be in the network
                 # we limited node count to 10 for testing purposes
 isSerialIDChanged = True
 nodeMoneyInserted = [0] * node_count # initialize the number of quarters per machine as 0
-carExistance = [0] * node_count # initialize the existances to false (or 0)
-string_carExistance = [0] * node_count # used for browser feed
+nodeStates = ["IDLE"] * node_count # stores the current state of node
+carExistance = ["False"] * node_count # initialize the existances to false (or 0)
+string_carExistance = ["Spot is Open"] * node_count # used for browser feed
 emailList = [0] * node_count
+emailList[0] = 'sejohn@usc.edu'
 global_counter = 0
 local_webpage = ""
 
@@ -104,15 +52,19 @@ def on_connect(client, userdata, flags, rc):
         topic_nodeMoneyInserted = "parkingNode" + str(counter) + "/nodeMoneyInserted" # topic that receives current moneyInserted in a node
         subtopic_carExists = "parkingNode" + str(counter) + "/carExists" # topic that receives information on whether a car is parked
         subtopic_sendEmail = "parkingNode" + str(counter) + "/sendEmail" # topic that receives information on when to send email
+        subtopic_nodeState = "parkingNode" + str(counter) + "/nodeState" # topic that receives info on state of parking node
         client.subscribe(topic_nodeMoneyInserted)
         client.subscribe(subtopic_carExists)
         client.subscribe(subtopic_sendEmail)
+        client.subscribe(subtopic_nodeState)
         print("Subscriped to Topic: " + topic_nodeMoneyInserted)
         print("Subscribed to Topic: " + subtopic_carExists)
         print("Subscribed to Topic: " + subtopic_sendEmail)
+        print("Subscribed to Topic: " + subtopic_nodeState)
         client.message_callback_add(topic_nodeMoneyInserted, on_money_insert)
         client.message_callback_add(subtopic_carExists, on_car_existance)
         client.message_callback_add(subtopic_sendEmail, on_email)
+        client.message_callback_add(subtopic_nodeState, on_node_recv)
 
         counter += 1
 
@@ -166,10 +118,19 @@ def on_email(client, userdata, message):
     global emailList
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
-    #if (bool(message_split[1])):
-    #    send_email(str(emailList[int(message_split[0])]))
+    emailList[int(message_split[0])] = str(message_split[1])
+    if (bool(message_split[1])):
+        send_email(str(emailList[int(message_split[0])]))
     print("\n\n{Node " + message_split[0] + "} - send email signal is " + message + "\n") 
-    send_email('sejohn@usc.edu')
+    # send_email('sejohn@usc.edu')
+
+def on_node_recv(client, userdata, message):
+    # actions when recieve a state change of a node
+    global nodeStates
+    message = str(message.payload, "utf-8")
+    message_split = message.split(":")
+    nodeStates[int(message_split[0])] = str(message_split[1])
+    print("\n\n{Node " + message_split[0] + "} - state is " + message[1] + "\n")
 
 def send_email(to_email):
 # Try to log in to server and send email
@@ -219,12 +180,20 @@ def rewritePage():
     global local_webpage
     global carExistance
     global string_carExistance
+    global nodeMoneyInserted
+
+    total_current_node_money = sum(nodeMoneyInserted)
+    
+    num_illegal_cars = 0
+    for element in nodeStates:
+        if (str(element) == 'LOADING'):
+            num_illegal_cars += 1
 
     for element in range(len(carExistance)):
-        if carExistance[element] is str(True):
-            string_carExistance[element] = "Spot Open"
-        else: 
+        if (str(carExistance[element]) == 'True'):
             string_carExistance[element] = "UNAVAILABLE"
+        else: 
+            string_carExistance[element] = "Spot is Open"
 
     local_webpage = """
     <!DOCTYPE html>
@@ -232,7 +201,7 @@ def rewritePage():
     <head>
         <meta charset="UTF-8">
         <title> Parking Lot Management System </title>
-        <meta http-equiv="refresh" content="6">
+        <meta http-equiv="refresh" content="3">
     </head>
     <body>
         <h1>Parking Lot Management System</h1>
@@ -252,10 +221,8 @@ def rewritePage():
             <li>{NODE EIGHT}&nbsp;~&gt; """ + string_carExistance[8] + """</li>
             <li>{NODE NINE}&nbsp;~&gt; """ + string_carExistance[9] + """</li>
         </ul>
-        <p>Total Money Inserted into Parking Meters Currently:&nbsp;</p>
-        <p>Number of Current Illegal Parking Cars:</p>
-        <p>Here is some&nbsp;<strong>sample bold text</strong>.&nbsp;</p>
-        <blockquote>Here is a blockquote... add some more text!</blockquote>
+        <p>Total Money Inserted into Parking Meters Currently:&nbsp; """ + str(total_current_node_money) + """</p>
+        <p>Number of Current Illegal Parking Cars: """ + str(num_illegal_cars) + """</p>
     </body>
     </html?
 """

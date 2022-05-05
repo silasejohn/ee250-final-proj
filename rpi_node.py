@@ -191,7 +191,10 @@ if __name__ == '__main__':
             nodeState = prevState
 
         if nodeState is not prevState:
-            print("Current State: " + nodeState)
+            pubtopic_nodeState = nodeName + "/nodeState"
+            client.publish(pubtopic_nodeState, node_serialID + ":" + str(nodeState))
+            print("Published Topic: " + pubtopic_nodeState + " with message " + str(nodeState))
+            # print("Current State: " + nodeState)
 
         ## PERFORMS CERTAIN ACTIONS BASED ON STATE ##
         if (nodeState is "IDLE"):
