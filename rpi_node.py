@@ -138,7 +138,7 @@ if __name__ == '__main__':
         ## DETERMINING EXISTANCE OF CAR ##
         objDist = grovepi.ultrasonicRead(ultras)
         list_insert_counter += 1
-        if list_insert_counter >= movingAvgFilterLength):
+        if (list_insert_counter >= movingAvgFilterLength):
             list_insert_counter = 0
         if (objDist > 1) and (objDist < 100):
             pastCarExistancepoints[list_insert_counter] = 1
