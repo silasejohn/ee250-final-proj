@@ -250,7 +250,7 @@ def browserDisplay():
     newLocalWebpage = open("displayData.html", "w")
     newLocalWebpage.write(local_webpage)
     newLocalWebpage.close()
-    webbrowser.open_new_tab("displayData.html")
+    # webbrowser.open_new_tab("displayData.html")
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -260,6 +260,8 @@ if __name__ == '__main__':
     client.connect(host="eclipse.usc.edu", port=1883, keepalive=60)
     client.loop_start()
     time_counter = 0
+    browserDisplay()
+    webbrowser.open_new_tab("displayData.html")
 
     while True:
         # will continously be publishing newest serialID on the loop (newest node will pick it up)
@@ -272,6 +274,7 @@ if __name__ == '__main__':
         
         time.sleep(.1) # gives some break in the loop
         time_counter += 1
+        browserDisplay()
         if (time_counter > 100):
             time_counter = 0
-            browserDisplay()
+            # browserDisplay()
