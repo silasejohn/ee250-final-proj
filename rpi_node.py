@@ -147,7 +147,7 @@ if __name__ == '__main__':
             else:
                 pass
         if (oldCarExists is not carExists):
-            pubtopic_carExists = "parkingNode" + node_serialID + "/carExists"
+            pubtopic_carExists = nodeName + "/carExists"
             client.publish(pubtopic_carExists, node_serialID + ":" + str(carExists))
             print("Published Topic: " + pubtopic_carExists + " with message " + str(carExists))
         
@@ -203,12 +203,16 @@ if __name__ == '__main__':
             digitalWrite(ledR,0)
             digitalWrite(ledG,1)
             setRGB(0, 128, 0)
-            timeAllotted = totalMoneyInserted * .4
+            timeAllotted = totalMoneyInserted * .6
             timeDiff = (datetime.now()-timePre).total_seconds() 
             if (timeDiff > timeAllotted):  
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
             timeLeft = int(timeAllotted) - int(timeDiff)
+            if (timeLeft >= 10):
+                pubtopic_sendEmail = nodeName + "/sendEmail"
+                client.publish(pubtopic_sendEmail, node_serialID + ":" + str(True))
+                print("Published Topic: " + pubtopic_sendEmail + " with a message of " + str(True))
             displayText = "Time Left:     \n" + str(timeLeft)
             setText_norefresh(displayText)
         elif (nodeState is "EMPTY"):
