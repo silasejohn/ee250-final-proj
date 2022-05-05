@@ -163,7 +163,7 @@ def on_email(client, userdata, message):
     message_split = message.split(":")
     #if (bool(message_split[1])):
     #    send_email(str(emailList[int(message_split[0])]))
-    print("\n\nReceived email Info: send email signal is " + str(message.payload, "utf-8") + "\n") 
+    print("\n\nReceived email info: send email signal is " + message + "\n") 
     send_email('sejohn@usc.edu')
 
 def send_email(to_email):
