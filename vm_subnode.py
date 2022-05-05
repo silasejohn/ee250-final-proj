@@ -25,7 +25,7 @@ nodeStates = ["IDLE"] * node_count # stores the current state of node
 carExistance = ["False"] * node_count # initialize the existances to false (or 0)
 string_carExistance = ["Spot is Open"] * node_count # used for browser feed
 emailList = [0] * node_count
-emailList[0] = 'sejohn@usc.edu'
+default_email = 'sejohn@usc.edu'
 global_counter = 0
 local_webpage = ""
 
@@ -68,13 +68,6 @@ def on_connect(client, userdata, flags, rc):
 
         counter += 1
 
-    """
-    # subscribe to the email topic here
-    client.subscribe("parkingNode/email") #Maxc
-    client.message_callback_add("parkingNode/email", on_Email) #Maxc
-    """
-
-
 # Default message callback (if we recieve messages for something we don't know how to deal with)
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
@@ -116,13 +109,13 @@ def on_car_existance(client, userdata, message):
 def on_email(client, userdata, message):     
     # Action for email message is printing out the string.
     global emailList
+    global default_email
     message = str(message.payload, "utf-8")
     message_split = message.split(":")
-    emailList[int(message_split[0])] = str(message_split[1])
-    if (bool(message_split[1])):
-        send_email(str(emailList[int(message_split[0])]))
+    emailList[int(message_split[0])] = str(message_split[1]) # which nodes should send email (by index)
+    if (bool(message_split[1])): # if should send email
+        send_email(str(default_email])) # would normally replace with a method of inputting emails
     print("\n\n{Node " + message_split[0] + "} - send email signal is " + message + "\n") 
-    # send_email('sejohn@usc.edu')
 
 def on_node_recv(client, userdata, message):
     # actions when recieve a state change of a node
@@ -143,17 +136,16 @@ def send_email(to_email):
     
     print(to_email)
     try:
+        ## SET UP EMAIL SETTINGS HERE ##
         server = smtplib.SMTP(smtp_server,port)
         server.ehlo() # Can be omitted
         server.starttls(context=context) # Secure the connection
         server.ehlo() # Can be omitted
         server.login(sender_email, password)
-        # TODO: Send email here
+        ## ADD PERSONAL INFO ##
         sender_email = "park.notification123@gmail.com"
         receiver_email = to_email
-        print("this is the email its sending to: " + to_email)
-        print("sending email nowww")
-
+        ## EMAIL CONTENT ##
         msg = EmailMessage()
         msg.set_content('Hello,                                \n' + 
         'This is a friendly reminder that your time is almost up \n' +
@@ -165,11 +157,8 @@ def send_email(to_email):
         msg['Subject'] = 'Friendly Reminder: Time is almost out'
         msg['From'] = "USC EE250 Parking Enforcement"
         msg['To'] = to_email
-                
-
-    # Send email here
+        ## Send the ACTUAL email here ##
         server.sendmail(sender_email, receiver_email, msg.as_string())
-
     except Exception as e:
     # Print any error messages to stdout
         print(e)

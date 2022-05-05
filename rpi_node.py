@@ -216,6 +216,9 @@ if __name__ == '__main__':
             if (timeDiff > timeAllotted):  
                 nodeState = "LOADING"
                 totalMoneyInserted = 0 
+                pubtopic_nodeMoneyInserted = nodeName + "/nodeMoneyInserted"
+                client.publish(pubtopic_nodeMoneyInserted, node_serialID + ":" + str(totalMoneyInserted))
+                print("Published Topic: " + pubtopic_nodeMoneyInserted + " with a message of " + str(totalMoneyInserted))
             timeLeft = int(timeAllotted) - int(timeDiff)
             if ((timeLeft <= 10) and (isEmailSent is False)):
                 pubtopic_sendEmail = nodeName + "/sendEmail"
