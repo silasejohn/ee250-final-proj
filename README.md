@@ -4,12 +4,12 @@
 <b>Online Parking lot Management System</b>
 <br><b>USC 2022 Spring</b>
 <br><b> Professor Shahin Nazarian</b> 
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
 This is our final project for USC EE250 class. We simulated a parking lot management system and added some other functionality and visualization. See this writeup for further information: https://drive.google.com/file/d/18WxfGYAZZJHv7pOjswmcGV6ydezgwwc9/view
 
-## The group
+## The Team Members
 Max Chen, USC Electrical Engineering
 <br>Silas John, USC Computer Engineering
 <br>Joseph Shin, USC Computer Science
@@ -21,19 +21,19 @@ Please use the link below to see the demo.
   
 ## To get started...
   
-Please download the rpi_node.py file from the git repository to the Raspberry Pi.
-<br>  cd in to the directory that has rpi_node.py 
-  In the terminal.
-```sh
-  $ python3 rpi_node.py
-```
-<br> Now download vm_subnode.py to the Virtual machine on the laptop.
-<br> cd into the directory that has vm_subnode.py in VM
-  
- In the terminal,
+Please download the git repo to the Raspberry Pi and Virtual Machine.
+
+<br> Please cd into the directory that has vm_subnode.py in the VM
+In the terminal,
 ```sh
   $ python3 vm_subnode.py
 ```
+<br> Now, cd in to the directory that has rpi_node.py in the raspberry pi
+In the terminal.
+```sh
+  $ python3 rpi_node.py
+```
+
   
  ## Built using..
   
