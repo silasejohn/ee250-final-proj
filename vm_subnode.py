@@ -77,6 +77,7 @@ isSerialIDChanged = True
 nodeMoneyInserted = [0] * node_count # initialize the number of quarters per machine as 0
 carExistance = [0] * node_count # initialize the existances to false (or 0)
 emailList = [0] * node_count
+global_counter = 0
 local_webpage = """
     <!DOCTYPE html>
     <html lang="en">
@@ -101,7 +102,7 @@ local_webpage = """
             <li>{NODE SEVEN}&nbsp;~&gt;</li>
             <li>{NODE EIGHT}&nbsp;~&gt;</li>
             <li>{NODE NINE}&nbsp;~&gt;</li>
-            <li>{NODE TEN}&nbsp;~&gt;</li>
+            <li>{NODE TEN}&nbsp;~&gt; """ + global_counter + """</li>
         </ul>
         <p>Total Money Inserted into Parking Meters Currently:&nbsp;</p>
         <p>Number of Current Illegal Parking Cars:</p>
@@ -277,4 +278,5 @@ if __name__ == '__main__':
         browserDisplay()
         if (time_counter > 100):
             time_counter = 0
+            global_counter += 1
             # browserDisplay()
